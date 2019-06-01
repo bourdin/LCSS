@@ -1,0 +1,23 @@
+#Rescale: no
+Geometry:
+  width: 50
+  height: 50
+  thickness: 1
+  lc: 10
+Mesh:
+  hf: 0.1
+  hc: 0.1
+Beam:
+  intensity: 1
+  criticalRadius: 1
+  scanningSpeed: 1.
+  position: 0.
+Material:  
+  YoungsModulus: 1.
+  PoissonRatio: .23
+  fractureToughness: 1.
+  linearThermalExpansion: 1.e-6
+  lightAbsorpsionCoefficient: 1
+  density: 1.
+  specificHeat: 1.
+  thermalDiffusivity: 1.

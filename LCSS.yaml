@@ -1,0 +1,74 @@
+### global options
+verbose: 0
+boundaryDisplacement:
+    scaling: linear
+boundaryTemp:
+    scaling: constant
+flux:
+    scaling: file
+    offset: 1
+stress:
+    offset: 3
+force: 
+    offset: 0
+pressureForce:
+    offset: 0
+CrackPressureForce:
+    offset: 0
+CumulatedPlasticDissipation:
+    offset: 0
+defmech:
+    irrevthres: 0.
+    timestepping:
+        type: quasistatic
+heatxfer:
+    timestepping:
+        type: steadystate
+    initialTemp: 0
+temp:
+    snes: 
+        type: ksponly
+    ksp: 
+        type: gmres
+disp:
+    snes:
+        linesearch:
+            type: cp
+time:
+    interpolation: exo
+cs0001:
+    hookeslaw: 
+        type: isotropic
+        YoungsModulus: {YoungsModulus}
+        PoissonRatio: {PoissonRatio}
+        PlaneStress: 1
+    FractureToughness: {fractureToughness}
+    internallength: {internalLength}
+    residualstiffness: {residualStiffness}
+    LinearThermalExpansion: {linearThermalExpansion}, {linearThermalExpansion}, 0
+    ThermalConductivity: {thermalConductivity}, {thermalConductivity}, 0
+    damage:
+        type: AT1Elastic
+    plasticity:
+        type: NONE
+    displacementbc: no,no,no
+    damageBC: no
+    advectionVector: {scanningSpeed},0,0
+cs0010:
+    tempBC: yes
+    boundaryTemp: 0.
+    displacementbc: no,no,no
+    damageBC: no
+
+cs0020:
+    tempBC: no
+    displacementbc: no,no,no
+    displacementUpperBound: 1e+30,0.,0.
+    damageBC: yes
+    boundaryDamage: 1.
+cs0021:
+    tempBC: no
+    displacementbc: no,no,no
+    displacementLowerBound: -1e+30,0.,0.
+    damageBC: yes
+    boundaryDamage: 1.
