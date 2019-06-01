@@ -14,7 +14,7 @@ def createParser():
     mesh = parser.add_argument_group('Mesh')
     mesh.add_argument('--hf',type=float,default=1.e-1,help='Fine mesh size [m]')
     mesh.add_argument('--hc',type=float,default=1.e-1,help='Coarse mesh size [m]')
-    #mesh.add_argument('--r',type=float,default=1e-2,help='Mesh transition width [m]')
+    mesh.add_argument('--r',type=float,default=2,help='Mesh transition width [m]')
 
     beam = parser.add_argument_group('Beam')
     beam.add_argument('--intensity','--I',type=float,default=1,help='Intensity (50 - 200) [W]')
@@ -54,6 +54,7 @@ def createParser():
     misc.add_argument('--mpiexec',help='mpi job launcher',default='mpiexec')
     misc.add_argument('--meshonly',help='meshonly, do not run',default=False,action='store_true')
     misc.add_argument('--forcemesh',help='re-generate mesh even if it exists',default=False,action='store_true')
+    misc.add_argument('--postprocess',help='Automatically run visit to generate .png file',default=False,action='store_true')
     args = parser.parse_args()
 
     parser.add_argument('configfile',nargs='?',type=argparse.FileType(mode='r'),default=None,help='YAML configuration file (overrides all other options)')
