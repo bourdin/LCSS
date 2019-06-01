@@ -59,10 +59,3 @@ def createParser():
     parser.add_argument('configfile',nargs='?',type=argparse.FileType(mode='r'),default=None,help='YAML configuration file (overrides all other options)')
     return parser
 
-if __name__ == "__main__":
-    from pprint import pprint
-    parser = createParser()
-    options = pymef90.parse(parser,'configfile')
-    for k in ['Geometry','Mesh','Beam','Material']:
-        print(k)
-        pprint(pymef90.parseGroup(parser,options,k).__dict__)

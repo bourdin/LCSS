@@ -33,7 +33,6 @@ def main():
             print '%s not found: generating new mesh'%(archmeshprefix+'.gen')
             if not os.path.exists(options.meshdir):
                 os.makedirs(options.meshdir)
-            print options.__dict__
             pymef90.argsWrite(options.geofile,
                       os.path.join(options.meshdir,options.hash+'.geo'),
                       options.__dict__)
