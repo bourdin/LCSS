@@ -34,7 +34,7 @@ temp:
     snes: 
         type: ksponly
     ksp: 
-        type: gmres
+        type: bcgsl
 disp:
     snes:
         linesearch:
