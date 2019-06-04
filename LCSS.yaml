@@ -1,5 +1,5 @@
 ### global options
-verbose: 0
+verbose: 1
 boundaryDisplacement:
     scaling: linear
 boundaryTemp:
