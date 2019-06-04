@@ -63,7 +63,7 @@ cs0001:
         type: NONE
     displacementbc: no,no,no
     damageBC: no
-    advectionVector: {scanningSpeed},0,0
+    advectionVector: -{scanningSpeed},0,0
 cs0010:
     name: "top/bottom edges"
     tempBC: yes
@@ -72,7 +72,8 @@ cs0010:
     damageBC: no
 cs0011:
     name: "left/right edges"
-    tempBC: no
+    tempBC: yes
+    boundaryTemp: 0.
     displacementbc: no,no,no
     damageBC: no
 cs0020:
@@ -80,14 +81,14 @@ cs0020:
     tempBC: no
     displacementbc: no,no,no
     displacementUpperBound: 1e+30,0.,0.
-    damageBC: yes
+    damageBC: no
     boundaryDamage: 1.
 cs0021:
     name: "crack upper face"
     tempBC: no
     displacementbc: no,no,no
     displacementLowerBound: -1e+30,0.,0.
-    damageBC: yes
+    damageBC: no
     boundaryDamage: 1.
 vs0300:
     name: "bottom left"

@@ -26,7 +26,7 @@ def createParser():
     material.add_argument('--YoungsModulus', '--E', type=float, default=1, help="Young's modulus (~ 74e9) [Pa]")
     material.add_argument('--PoissonRatio', '--nu', type=float, default=0.23, help="Poisson ratio (~ 0.23)")
     material.add_argument('--fractureToughness', '--gc', type=float, default=1, help="Fracture toughness [J/m^2]")
-    material.add_argument('--linearThermalExpansion','--beta', type=float, default=8.5e-6, help='Linear thermal expansion coefficient [1/K]')
+    material.add_argument('--linearThermalExpansion','--beta', type=float, default=1., help='Linear thermal expansion coefficient [1/K]')
     material.add_argument('--lightAbsorpsionCoefficient','--alphaL', type=float, default=9., help='Light absorbtion coefficient at beam frequency (~ 9) [1/m]')
     material.add_argument('--density', '--rho', type=float, default=1,help='Density (~ 2.48e3)[kg/m^3]')
     material.add_argument('--specificHeat', '--cp', type=float, default=1,help='Specific heat (0.35e3 - 1e3 [J/K/kg]')

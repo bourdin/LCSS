@@ -1,8 +1,8 @@
 #!/usr/bin/env python
+#SBATCH -J LCSS
 import LCSS
 import hashlib
 import pymef90
-
     
     
 
@@ -29,7 +29,7 @@ def main():
     if not os.path.isfile(archmeshprefix+'.gen') or options.forcemesh:
         if options.dontmesh:
             print('Cannot find mesh, exiting')
-            sys.exit(-1)
+            return -1
         else:
             print('{0}.gen not found: generating new mesh'.format(archmeshprefix))
             if not os.path.exists(options.meshdir):
@@ -50,42 +50,45 @@ def main():
     ###
     ### Create computation directory
     ###
+    if options.meshonly:
+        return 0
+    ###
+    ### Write 00_INFO.txt and 00_INFO.json
+    ###
+    if not os.path.exists(options.workdir):
+        os.makedirs(options.workdir)
+    os.chdir(options.workdir)
 
 
-    if not options.meshonly:
-        ###
-        ### Write 00_INFO.txt and 00_INFO.json
-        ###
-        if not os.path.exists(options.workdir):
-            os.makedirs(options.workdir)
-        os.chdir(options.workdir)
+    #pymef90.Dictwritetxt(options.__dict__,'00_INFO.txt',overwrite=False)
+    pymef90.DictwriteJSON(options.__dict__,'00_INFO.json',overwrite=True)
+    shutil.copyfile(archmeshprefix+'.gen',os.path.join(options.workdir,options.prefix+'.gen'))
 
+    ###
+    ### Prepare vDef yaml options file
+    ####
+    pymef90.argsWrite(options.yamlfile,
+              os.path.join(options.workdir,options.prefix+'.yaml'),
+              options.__dict__)
 
-        #pymef90.Dictwritetxt(options.__dict__,'00_INFO.txt',overwrite=False)
-        pymef90.DictwriteJSON(options.__dict__,'00_INFO.json',overwrite=True)
+    ### Generate heat flux in output file
+    # find the flux script within the path and pythonpath
+    for binpath in sys.path+os.getenv('PATH').split(':'):
+        if os.path.exists(os.path.join(binpath,"LCSS_flux.py")):
+            break
+    cmd = '{0} -i {1}.gen -o {1}_out.gen --cs 1 --force --initialPos {2} 0 0 --r0 {3} --Wabs {4}'.format(os.path.join(binpath,'LCSS_flux.py'),options.prefix,options.position,options.criticalRadius,options.intensity)
+    print('Now running: {0}'.format(cmd))
+    os.system(cmd)
 
-        
-        shutil.copyfile(archmeshprefix+'.gen',os.path.join(options.workdir,options.prefix+'.gen'))
+    ### Run the computation
+    if os.path.isfile(os.path.join(os.getenv("MEF90_DIR"),"bin",os.getenv("PETSC_ARCH"),"vDef")):
+        bin = os.path.join(os.getenv("MEF90_DIR"),"bin",os.getenv("PETSC_ARCH"),"vDef")
+    else:
+        print('Cannot find binary for vDef')
+        sys.exit(-1)
 
-        ###
-        ### Prepare vDef yaml options file
-        ####
-        pymef90.argsWrite(options.yamlfile,
-                  os.path.join(options.workdir,options.prefix+'.yaml'),
-                  options.__dict__)
-        ### Generate heat flux in output file
-        cmd = '{0} -i {1}.gen -o {1}_out.gen --cs 1 --force --initialPos {2} 0 0 --r0 {3} --Wabs {4}'.format(os.path.join(scriptpath,'LCSS_flux.py'),options.prefix,options.position,options.criticalRadius,options.intensity)
-        print(cmd)
-        os.system(cmd)
-
-        ### Run the computation
-        if os.path.isfile(os.path.join(os.getenv("MEF90_DIR"),"bin",os.getenv("PETSC_ARCH"),"vDef")):
-            bin = os.path.join(os.getenv("MEF90_DIR"),"bin",os.getenv("PETSC_ARCH"),"vDef")
-        else:
-            print('Cannot find binary for vDef')
-            sys.exit(-1)
     if options.mpiexec == 'mpirun':
-            options.mpiexec += ' -np {0} -machinefile {1}'.format(os.getenv("NPROCS"),os.getenv("PBS_NODEFILE"))
+        options.mpiexec += ' -np {0} -machinefile {1}'.format(os.getenv("NPROCS"),os.getenv("PBS_NODEFILE"))
     cmd1 = options.mpiexec + ' {0:s} -prefix {prefix:s} -options_file_yaml {prefix:s}.yaml '.format(bin,**options.__dict__)
     if options.extraopts:
         cmd1+= options.extraopts
@@ -93,13 +96,21 @@ def main():
         cmd1 += ' -disp_pc_type hypre -disp_pc_hypre_type boomeramg -disp_pc_hypre_boomeramg_strong_threshold 0.9 '
     if options.ml:
         cmd1 += ' -disp_pc_type ml '
-
     if options.unilateralcontact == 'none':
         cmd1 += ' -disp_snes_type ksponly'
         
-    print("Now running :{0}\n".format(cmd1))
+    print("Now running: {0}".format(cmd1))
     os.system(cmd1)
 
+    if options.postprocess:
+        cmd = 'ml visit; visit -cli -nowin -s {0} --output {1}.png {1}_out.gen;'.format(os.path.join(binpath,"LCSS_PNG.py"),options.prefix)
+        print('now running: {0}'.format(cmd))
+        os.system(cmd)
+        cmd = 'ml visit; visit -cli -nowin -s {0} --output {1}_disp.png --displacementScaling 1 {1}_out.gen;'.format(os.path.join(binpath,"LCSS_PNG.py"),options.prefix)
+        print('now running: {0}'.format(cmd))
+        os.system(cmd)
+
+    print(options.__dict__)
 import sys  
 if __name__ == "__main__":
     sys.exit(main())
