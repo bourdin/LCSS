@@ -38,8 +38,8 @@ def main():
                       os.path.join(options.meshdir,options.hash+'.geo'),
                       options.__dict__)
             os.chdir(options.meshdir)
-            os.system('gmsh -2 -format msh2 {0}.geo'.format(options.hash))
-            os.system('gmsh2exo.py --force {0}.msh {0}.gen'.format(options.hash))            
+            os.system('gmsh -2 -format msh2 -order {order} {hash}.geo'.format(**options.__dict__))
+            os.system('gmsh2exo.py --force {hash}.msh {hash}.gen'.format(**options.__dict__))            
             #pymef90.Dictwritetxt(Geometry.__dict__,archmeshprefix+'.txt')
             pymef90.DictwriteJSON(Geometry.__dict__,archmeshprefix+'.json')
 

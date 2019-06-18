@@ -10,6 +10,7 @@ def createParser():
     geom.add_argument('--height',type=float,default=50,help='Domain height m]')
     geom.add_argument('--thickness',type=float,default=1,help='Domain thickness [m]')
     geom.add_argument('--lc',type=float,default=10,help='Initial crack length [m]')
+    geom.add_argument('--order',type=float,default=1,choices = [1,2],help='finite element discretization order')
 
     mesh = parser.add_argument_group('Mesh')
     mesh.add_argument('--hf',type=float,default=1.e-1,help='Fine mesh size [m]')
