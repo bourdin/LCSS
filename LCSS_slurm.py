@@ -22,8 +22,6 @@ def main():
     options.__dict__ = pymef90.PrepareJob(Geometry,options.__dict__)
     scriptpath = os.path.dirname(os.path.abspath(__file__))
 
-    print(options)
-
     ###
     ### Search for the mesh file, and generate it if it is missing
     ###
