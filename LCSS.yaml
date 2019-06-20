@@ -13,7 +13,7 @@ force:
     offset: 0
 pressureForce:
     offset: 0
-CrackPressureForce:
+CrackPressure:
     offset: 0
 CumulatedPlasticDissipation:
     offset: 0
@@ -91,19 +91,19 @@ cs0021:
     damageBC: no
     boundaryDamage: 1.
 vs0300:
-    name: "bottom left"
+    #name: "bottom left"
     tempBC: no
     damageBC: no
     displacementBC: yes,no,no
     boundaryDisplacement: 0.,0.,0
 vs0301:
-    name: "middle right"
+    #name: "middle right"
     tempBC: no
     damageBC: no
     displacementBC: no,yes,no
     boundaryDisplacement: 0.,0.,0
 vs0302:
-    name: "top left"
+    #name: "top left"
     tempBC: no
     damageBC: no
     displacementBC: yes,no,no

@@ -88,7 +88,7 @@ def main():
         sys.exit(-1)
 
     if options.mpiexec == 'mpirun':
-        options.mpiexec += ' -np {0} -machinefile {1}'.format(os.getenv("NPROCS"),os.getenv("PBS_NODEFILE"))
+        options.mpiexec += ' -machinefile {0}'.format(os.getenv("PBS_NODEFILE"))
     cmd1 = options.mpiexec + ' {0:s} -prefix {prefix:s} -options_file_yaml {prefix:s}.yaml '.format(bin,**options.__dict__)
     if options.extraopts:
         cmd1+= options.extraopts
