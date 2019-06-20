@@ -110,7 +110,6 @@ def main():
         print('now running: {0}'.format(cmd))
         os.system(cmd)
 
-    print(options.__dict__)
 import sys  
 if __name__ == "__main__":
     sys.exit(main())

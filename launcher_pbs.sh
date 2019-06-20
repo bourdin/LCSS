@@ -16,4 +16,4 @@ numl=201
 for l in np.linspace(30,70,numl):
    cmd = "SCANNINGSPEED={0} HF={1} HC={2} WIDTH={3} HEIGHT={4} LC={5} ORDER={6} qsub ../python/LCSS_pbs.sh".format(scanningSpeed,hf,hc,width,height,l,order)
    print(cmd)
-   #os.system(cmd)
+   os.system(cmd)
