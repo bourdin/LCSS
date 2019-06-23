@@ -99,6 +99,9 @@ def main():
     if options.unilateralcontact == 'none':
         cmd1 += ' -disp_snes_type ksponly'
         
+    cmd += ' -temp_ksp_monitor_true_residual -temp_ksp_converged_reason'
+
+
     print("Now running: {0}".format(cmd1))
     os.system(cmd1)
 

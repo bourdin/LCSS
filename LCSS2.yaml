@@ -35,6 +35,8 @@ temp:
         type: ksponly
     ksp: 
         type: bcgsl
+    pc:
+        type: hypre
 disp:
     snes:
         linesearch:
@@ -63,7 +65,7 @@ cs0001:
         type: NONE
     displacementbc: no,no,no
     damageBC: no
-    advectionVector: -{scanningSpeed},0,0
+    advectionVector: {scanningSpeed},0,0
 cs0010:
     name: "top/bottom edges"
     tempBC: yes
