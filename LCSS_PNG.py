@@ -269,6 +269,7 @@ def parse(args=None):
     parser.add_argument('--displacementScaling',type=float,default=0)
     parser.add_argument('--damageThreshold',type=float,default=.99)
     parser.add_argument('--output',default=None)
+    parser.add_argument('--force',default=False,action='store_true')
     parser.add_argument('inputfile',help='input file')
     return parser.parse_args()
 
@@ -277,8 +278,7 @@ if __name__ == "__main__":
     import os.path
 
     options = parse()
-    print(options)
-    if os.path.exists(options.inputfile):   
+    if os.path.exists(options.inputfile) and (not os.path.exists(options.output)  or options.force):
         print('processing {0}'.format(options.inputfile)) 
         plot(options)   
         sys.exit(0)
