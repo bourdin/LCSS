@@ -11,6 +11,7 @@ def createParser():
     geom.add_argument('--thickness',type=float,default=1,help='Domain thickness [m]')
     geom.add_argument('--lc',type=float,default=10,help='Initial crack length [m]')
     geom.add_argument('--order',type=float,default=1,choices = [1,2],help='finite element discretization order')
+    geom.add_argument('--geofile',help='Name of the gmsh geo file',default='LCSS.geo')
 
     mesh = parser.add_argument_group('Mesh')
     mesh.add_argument('--hf',type=float,default=1.e-1,help='Fine mesh size [m]')
@@ -41,7 +42,6 @@ def createParser():
     vf.add_argument('--prefix',help='Name files after prefix + geometry instead of job ID',default=None)
     vf.add_argument('--dontmesh',help='Do not try to generate mesh if not found in meshdir',default=False,action='store_true')
     vf.add_argument('--yamlfile',help='Name of the yaml options file',default='LCSS.yaml')
-    vf.add_argument('--geofile',help='Name of the gmsh geo file',default='LCSS.geo')
     vf.add_argument('--atnum',help='Regularization type',type=int,default=1)
     vf.add_argument('--irrevtol',help='Irreversibility tolerance',type=float,default=1.)
     vf.add_argument('--extraopts',help='Additional options to pass to vDef',default=None)
