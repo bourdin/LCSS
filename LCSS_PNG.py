@@ -102,7 +102,82 @@ def getlaststep(fname):
   laststep = lastline.rsplit()[0] 
   return(int(laststep))
 
-def drawCrack(displacementScaling=.1,damageThreshold=.99):
+def drawCrack(displacementScaling=.1,damageThreshold=.99,BB=None):
+    ##
+    ## Add pseudocolor plot of fracture field
+    ##
+
+    AddPlot('Pseudocolor', 'Temperature')
+    PseudocolorAtts = PseudocolorAttributes()
+    PseudocolorAtts.scaling = PseudocolorAtts.Linear  # Linear, Log, Skew
+    PseudocolorAtts.skewFactor = 1
+    PseudocolorAtts.limitsMode = PseudocolorAtts.OriginalData  # OriginalData, CurrentPlot
+    PseudocolorAtts.minFlag = 0
+    PseudocolorAtts.maxFlag = 0
+    PseudocolorAtts.centering = PseudocolorAtts.Natural  # Natural, Nodal, Zonal
+    PseudocolorAtts.colorTableName = "hot"
+    PseudocolorAtts.invertColorTable = 0
+    PseudocolorAtts.opacityType = PseudocolorAtts.FullyOpaque  # ColorTable, FullyOpaque, Constant, Ramp, VariableRange
+    PseudocolorAtts.renderSurfaces = 1
+    PseudocolorAtts.renderWireframe = 0
+    PseudocolorAtts.renderPoints = 0
+    PseudocolorAtts.smoothingLevel = 0
+    PseudocolorAtts.legendFlag = 0
+    PseudocolorAtts.lightingFlag = 0
+    SetPlotOptions(PseudocolorAtts)
+
+    AddOperator("Displace", 1)
+    SetActivePlots(0)
+    DisplaceAtts = DisplaceAttributes()
+    DisplaceAtts.factor = displacementScaling
+    DisplaceAtts.variable = "Displacement"
+    SetOperatorOptions(DisplaceAtts, 1)
+
+    DrawPlots()
+    if BB == None:
+        Query("SpatialExtents", use_actual_data=1)
+        BB = GetQueryOutputValue() 
+    SetView(BB)
+
+    AddPlot("Subset", "ElementBlock", 1, 1)
+    SetActivePlots(1)
+    SetActivePlots(1)
+    SubsetAtts = SubsetAttributes()
+    SubsetAtts.colorType = SubsetAtts.ColorBySingleColor  # ColorBySingleColor, ColorByMultipleColors, ColorByColorTable
+    SubsetAtts.colorTableName = "Default"
+    SubsetAtts.invertColorTable = 0
+    SubsetAtts.legendFlag = 0
+    SubsetAtts.lineStyle = SubsetAtts.SOLID  # SOLID, DASH, DOT, DOTDASH
+    SubsetAtts.lineWidth = 1
+    SubsetAtts.singleColor = (255, 255, 255, 255)
+    SubsetAtts.SetMultiColor(0, (255, 0, 0, 255))
+    SubsetAtts.SetMultiColor(1, (0, 255, 0, 255))
+    SubsetAtts.SetMultiColor(2, (0, 0, 255, 255))
+    SubsetAtts.SetMultiColor(3, (0, 255, 255, 255))
+    SubsetAtts.SetMultiColor(4, (255, 0, 255, 255))
+    SubsetAtts.SetMultiColor(5, (255, 255, 0, 255))
+    SubsetAtts.subsetNames = ("1", "10", "11", "12", "20", "21")
+    SubsetAtts.opacity = 1
+    SubsetAtts.wireframe = 0
+    SubsetAtts.drawInternal = 0
+    SubsetAtts.smoothingLevel = 0
+    SubsetAtts.pointSize = 0.05
+    SubsetAtts.pointType = SubsetAtts.Point  # Box, Axis, Icosahedron, Octahedron, Tetrahedron, SphereGeometry, Point, Sphere
+    SubsetAtts.pointSizeVarEnabled = 0
+    SubsetAtts.pointSizeVar = "default"
+    SubsetAtts.pointSizePixels = 2
+    SetPlotOptions(SubsetAtts)
+    silr = SILRestriction()
+    silr.SuspendCorrectnessChecking()
+    silr.TurnOnAll()
+    for silSet in (2,3,4,5):
+        silr.TurnOffSet(silSet)
+    silr.EnableCorrectnessChecking()
+    SetPlotSILRestriction(silr ,0)
+    DrawPlots()
+    return BB    
+
+def drawCrack2(displacementScaling=.1,damageThreshold=.99,BB=None):
     ##
     ## Add pseudocolor plot of fracture field
     ##
@@ -141,9 +216,6 @@ def drawCrack(displacementScaling=.1,damageThreshold=.99):
     IsovolumeAtts.variable = "Damage"
     SetOperatorOptions(IsovolumeAtts, 1)
     DrawPlots()
-    Query("SpatialExtents", use_actual_data=1)
-    BB = GetQueryOutputValue() 
-    SetView(BB)
 
     AddPlot("Contour", "Temperature", 1, 1)
     SetActivePlots(1)
@@ -156,7 +228,7 @@ def drawCrack(displacementScaling=.1,damageThreshold=.99):
     ContourAtts.colorTableName = "hot_and_cold"
     ContourAtts.invertColorTable = 0
     ContourAtts.legendFlag = 0
-    ContourAtts.lineWidth = 2
+    ContourAtts.lineWidth = 1
     ContourAtts.contourNLevels = 10
     ContourAtts.contourValue = ()
     ContourAtts.contourPercent = ()
@@ -168,11 +240,49 @@ def drawCrack(displacementScaling=.1,damageThreshold=.99):
     ContourAtts.scaling = ContourAtts.Linear  # Linear, Log
     ContourAtts.wireframe = 0
     SetPlotOptions(ContourAtts)
+    DrawPlots()
+    if BB == None:
+        Query("SpatialExtents", use_actual_data=1)
+        BB = GetQueryOutputValue() 
+    SetView(BB)
 
-
+    AddPlot("Subset", "ElementBlock", 1, 1)
+    SetActivePlots(2)
+    SubsetAtts = SubsetAttributes()
+    SubsetAtts.colorType = SubsetAtts.ColorBySingleColor  # ColorBySingleColor, ColorByMultipleColors, ColorByColorTable
+    SubsetAtts.colorTableName = "Default"
+    SubsetAtts.invertColorTable = 0
+    SubsetAtts.legendFlag = 0
+    SubsetAtts.lineStyle = SubsetAtts.SOLID  # SOLID, DASH, DOT, DOTDASH
+    SubsetAtts.lineWidth = 2
+    SubsetAtts.singleColor = (255, 255, 255, 255)
+    SubsetAtts.SetMultiColor(0, (255, 0, 0, 255))
+    SubsetAtts.SetMultiColor(1, (0, 255, 0, 255))
+    SubsetAtts.SetMultiColor(2, (0, 0, 255, 255))
+    SubsetAtts.SetMultiColor(3, (0, 255, 255, 255))
+    SubsetAtts.SetMultiColor(4, (255, 0, 255, 255))
+    SubsetAtts.SetMultiColor(5, (255, 255, 0, 255))
+    SubsetAtts.subsetNames = ("1", "10", "11", "12", "20", "21")
+    SubsetAtts.opacity = 1
+    SubsetAtts.wireframe = 0
+    SubsetAtts.drawInternal = 0
+    SubsetAtts.smoothingLevel = 0
+    SubsetAtts.pointSize = 0.05
+    SubsetAtts.pointType = SubsetAtts.Point  # Box, Axis, Icosahedron, Octahedron, Tetrahedron, SphereGeometry, Point, Sphere
+    SubsetAtts.pointSizeVarEnabled = 0
+    SubsetAtts.pointSizeVar = "default"
+    SubsetAtts.pointSizePixels = 2
+    SetPlotOptions(SubsetAtts)
+    silr = SILRestriction()
+    silr.SuspendCorrectnessChecking()
+    silr.TurnOnAll()
+    for silSet in (2,3,4,5):
+       silr.TurnOffSet(silSet)
+    silr.EnableCorrectnessChecking()
+    SetPlotSILRestriction(silr ,0)
+    DrawPlots()
     return BB
     
-
 def SetView(BB):
     View2DAtts = View2DAttributes()
     View2DAtts.viewportCoords = (0.05, 0.95, 0.05, 0.95)
@@ -235,7 +345,7 @@ def plot(options):
         print ("unable to open database {0}".format(options.inputfile))
         return -1
 
-    BB = drawCrack(options.displacementScaling,options.damageThreshold)
+    BB = drawCrack2(options.displacementScaling,options.damageThreshold,tuple(options.BB))
     SetAnnotations()
     DrawPlots()
 
@@ -247,6 +357,7 @@ def plot(options):
     else:
         geometry = (int(2048.*W/H),2048)
 
+    print(BB,geometry)
     if options.output != None:
         filename=os.path.splitext(options.output)[0]
     else:
@@ -267,6 +378,7 @@ def parse(args=None):
     parser.add_argument('--step',type=int,default=0)
     parser.add_argument('--bg',choices=['white','black'],default='white')
     parser.add_argument('--displacementScaling',type=float,default=0)
+    parser.add_argument('--BB',type=float,nargs=4,default=None)
     parser.add_argument('--damageThreshold',type=float,default=.99)
     parser.add_argument('--output',default=None)
     parser.add_argument('--force',default=False,action='store_true')
@@ -280,6 +392,7 @@ if __name__ == "__main__":
     options = parse()
     if os.path.exists(options.inputfile) and (not os.path.exists(options.output)  or options.force):
         print('processing {0}'.format(options.inputfile)) 
+        print(options)
         plot(options)   
         sys.exit(0)
     else:
