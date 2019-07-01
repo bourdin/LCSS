@@ -357,7 +357,6 @@ def plot(options):
     else:
         geometry = (int(2048.*W/H),2048)
 
-    print(BB,geometry)
     if options.output != None:
         filename=os.path.splitext(options.output)[0]
     else:
@@ -392,7 +391,6 @@ if __name__ == "__main__":
     options = parse()
     if os.path.exists(options.inputfile) and (not os.path.exists(options.output)  or options.force):
         print('processing {0}'.format(options.inputfile)) 
-        print(options)
         plot(options)   
         sys.exit(0)
     else:
