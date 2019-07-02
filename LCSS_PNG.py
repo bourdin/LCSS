@@ -243,8 +243,10 @@ def drawCrack2(displacementScaling=.1,damageThreshold=.99,BB=None):
     DrawPlots()
     if BB == None:
         Query("SpatialExtents", use_actual_data=1)
-        BB = GetQueryOutputValue() 
-    SetView(BB)
+        newBB = GetQueryOutputValue() 
+    else:
+        newBB = tuple(BB)    
+    SetView(newBB)
 
     AddPlot("Subset", "ElementBlock", 1, 1)
     SetActivePlots(2)
@@ -281,7 +283,7 @@ def drawCrack2(displacementScaling=.1,damageThreshold=.99,BB=None):
     silr.EnableCorrectnessChecking()
     SetPlotSILRestriction(silr ,0)
     DrawPlots()
-    return BB
+    return newBB
     
 def SetView(BB):
     View2DAtts = View2DAttributes()
@@ -345,7 +347,7 @@ def plot(options):
         print ("unable to open database {0}".format(options.inputfile))
         return -1
 
-    BB = drawCrack2(options.displacementScaling,options.damageThreshold,tuple(options.BB))
+    BB = drawCrack2(options.displacementScaling,options.damageThreshold,options.BB)
     SetAnnotations()
     DrawPlots()
 
