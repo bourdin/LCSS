@@ -12,11 +12,9 @@ def createParser():
     geom.add_argument('--lc',type=float,default=10,help='Initial crack length [m]')
     geom.add_argument('--order',type=float,default=1,choices = [1,2],help='finite element discretization order')
     geom.add_argument('--geofile',help='Name of the gmsh geo file',default='LCSS.geo')
-
-    mesh = parser.add_argument_group('Mesh')
-    mesh.add_argument('--hf',type=float,default=1.e-1,help='Fine mesh size [m]')
-    mesh.add_argument('--hc',type=float,default=1.e-1,help='Coarse mesh size [m]')
-    mesh.add_argument('--r',type=float,default=2,help='Mesh transition width [m]')
+    geom.add_argument('--hf',type=float,default=1.e-1,help='Fine mesh size [m]')
+    geom.add_argument('--hc',type=float,default=1.e-1,help='Coarse mesh size [m]')
+    geom.add_argument('--r',type=float,default=2,help='Mesh transition width [m]')
 
     beam = parser.add_argument_group('Beam')
     beam.add_argument('--intensity','--I',type=float,default=1,help='Intensity (50 - 200) [W]')
