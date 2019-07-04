@@ -12,6 +12,9 @@ def parse(args=None):
     parser.add_argument("--initialPos",type=float,nargs=3,help="initial crack tip postion",default=[0.,0.,0.])
     parser.add_argument("--cs",type=int,nargs='*',help="list of cell sets where the beam is applied",default=[])
     parser.add_argument("--force",action="store_true",default=False,help="Overwrite existing files without prompting")
+    parser.add_argument("--time_min",type=float,default=1.,help='Start time')
+    parser.add_argument("--time_max",type=float,default=1.,help='End time')
+    parser.add_argument("--time_numstep",type=int,default=1,help='Number of time steps')
     return parser.parse_args()
     
 def exoformat(e):
@@ -73,11 +76,15 @@ def main():
     exoin.close()
     exoformat(exoout)
     
-    dim = exoout.num_dimensions()
-    exoout.put_time(1,1)
+    T = np.linspace(options.time_min,options.time_max,options.time_numstep)
+    for step in range(options.time_numstep):
+        exoout.put_time(step+1,T[step])
     for cs in options.cs:
         theta = beamProfile(exoout,options.Wabs,options.r0,options.initialPos,cs)
-        exoout.put_element_variable_values(cs,"Heat_Flux",1,theta)
+        step = 0
+        for step in range(options.time_numstep):
+            exoout.put_element_variable_values(cs,"Heat_Flux",step+1,theta)
+            step += 1
     exoout.close()
     
 if __name__ == "__main__":
