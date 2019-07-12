@@ -182,15 +182,15 @@ def drawCrack2(displacementScaling=.1,damageThreshold=.99,BB=None):
     ## Add pseudocolor plot of fracture field
     ##
 
-    AddPlot('Pseudocolor', 'Damage')
+    AddPlot('Pseudocolor', 'Temperature')
     PseudocolorAtts = PseudocolorAttributes()
     PseudocolorAtts.scaling = PseudocolorAtts.Linear  # Linear, Log, Skew
     PseudocolorAtts.skewFactor = 1
     PseudocolorAtts.limitsMode = PseudocolorAtts.OriginalData  # OriginalData, CurrentPlot
-    PseudocolorAtts.minFlag = 1
-    PseudocolorAtts.min = 0
-    PseudocolorAtts.maxFlag = 1
-    PseudocolorAtts.max = 1
+    # PseudocolorAtts.minFlag = 1
+    # PseudocolorAtts.min = 0
+    # PseudocolorAtts.maxFlag = 1
+    # PseudocolorAtts.max = 1
     PseudocolorAtts.centering = PseudocolorAtts.Natural  # Natural, Nodal, Zonal
     PseudocolorAtts.colorTableName = "hot"
     PseudocolorAtts.invertColorTable = 0
@@ -217,29 +217,29 @@ def drawCrack2(displacementScaling=.1,damageThreshold=.99,BB=None):
     SetOperatorOptions(IsovolumeAtts, 1)
     DrawPlots()
 
-    AddPlot("Contour", "Temperature", 1, 1)
-    SetActivePlots(1)
-    ContourAtts = ContourAttributes()
-    ContourAtts.defaultPalette.equalSpacingFlag = 1
-    ContourAtts.defaultPalette.discreteFlag = 1
-    ContourAtts.defaultPalette.categoryName = "Standard"
-    ContourAtts.changedColors = ()
-    ContourAtts.colorType = ContourAtts.ColorByColorTable  # ColorBySingleColor, ColorByMultipleColors, ColorByColorTable
-    ContourAtts.colorTableName = "hot_and_cold"
-    ContourAtts.invertColorTable = 0
-    ContourAtts.legendFlag = 0
-    ContourAtts.lineWidth = 1
-    ContourAtts.contourNLevels = 10
-    ContourAtts.contourValue = ()
-    ContourAtts.contourPercent = ()
-    ContourAtts.contourMethod = ContourAtts.Level  # Level, Value, Percent
-    ContourAtts.minFlag = 0
-    ContourAtts.maxFlag = 0
-    ContourAtts.min = 0
-    ContourAtts.max = 1
-    ContourAtts.scaling = ContourAtts.Linear  # Linear, Log
-    ContourAtts.wireframe = 0
-    SetPlotOptions(ContourAtts)
+    # AddPlot("Contour", "Temperature", 1, 1)
+    # SetActivePlots(1)
+    # ContourAtts = ContourAttributes()
+    # ContourAtts.defaultPalette.equalSpacingFlag = 1
+    # ContourAtts.defaultPalette.discreteFlag = 1
+    # ContourAtts.defaultPalette.categoryName = "Standard"
+    # ContourAtts.changedColors = ()
+    # ContourAtts.colorType = ContourAtts.ColorByColorTable  # ColorBySingleColor, ColorByMultipleColors, ColorByColorTable
+    # ContourAtts.colorTableName = "hot_and_cold"
+    # ContourAtts.invertColorTable = 0
+    # ContourAtts.legendFlag = 0
+    # ContourAtts.lineWidth = 1
+    # ContourAtts.contourNLevels = 10
+    # ContourAtts.contourValue = ()
+    # ContourAtts.contourPercent = ()
+    # ContourAtts.contourMethod = ContourAtts.Level  # Level, Value, Percent
+    # ContourAtts.minFlag = 0
+    # ContourAtts.maxFlag = 0
+    # ContourAtts.min = 0
+    # ContourAtts.max = 1
+    # ContourAtts.scaling = ContourAtts.Linear  # Linear, Log
+    # ContourAtts.wireframe = 0
+    # SetPlotOptions(ContourAtts)
     DrawPlots()
     if BB == None:
         Query("SpatialExtents", use_actual_data=1)
@@ -257,14 +257,14 @@ def drawCrack2(displacementScaling=.1,damageThreshold=.99,BB=None):
     SubsetAtts.legendFlag = 0
     SubsetAtts.lineStyle = SubsetAtts.SOLID  # SOLID, DASH, DOT, DOTDASH
     SubsetAtts.lineWidth = 2
-    SubsetAtts.singleColor = (255, 255, 255, 255)
-    SubsetAtts.SetMultiColor(0, (255, 0, 0, 255))
-    SubsetAtts.SetMultiColor(1, (0, 255, 0, 255))
-    SubsetAtts.SetMultiColor(2, (0, 0, 255, 255))
-    SubsetAtts.SetMultiColor(3, (0, 255, 255, 255))
-    SubsetAtts.SetMultiColor(4, (255, 0, 255, 255))
-    SubsetAtts.SetMultiColor(5, (255, 255, 0, 255))
-    SubsetAtts.subsetNames = ("1", "10", "11", "12", "20", "21")
+    SubsetAtts.singleColor = (255, 0, 0, 255)
+    #SubsetAtts.SetMultiColor(0, (255, 0, 0, 255))
+    #SubsetAtts.SetMultiColor(1, (0, 255, 0, 255))
+    #SubsetAtts.SetMultiColor(2, (0, 0, 255, 255))
+    #SubsetAtts.SetMultiColor(3, (0, 255, 255, 255))
+    #SubsetAtts.SetMultiColor(4, (255, 0, 255, 255))
+    #SubsetAtts.SetMultiColor(5, (255, 255, 0, 255))
+    #SubsetAtts.subsetNames = ("1", "10", "11", "12", "20", "21")
     SubsetAtts.opacity = 1
     SubsetAtts.wireframe = 0
     SubsetAtts.drawInternal = 0
@@ -278,7 +278,7 @@ def drawCrack2(displacementScaling=.1,damageThreshold=.99,BB=None):
     silr = SILRestriction()
     silr.SuspendCorrectnessChecking()
     silr.TurnOnAll()
-    for silSet in (2,3,4,5):
+    for silSet in silr.SetsInCategory('ElementBlock')[:-2]:
        silr.TurnOffSet(silSet)
     silr.EnableCorrectnessChecking()
     SetPlotSILRestriction(silr ,0)
