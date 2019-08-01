@@ -119,7 +119,7 @@ cs0021:
     tempBC: no
     displacementbc: no,no,no
     displacementLowerBound: -1e+30,0.,0.
-    damageBC: yes
+    damageBC: no
     boundaryDamage: 0
 cs0030:
     name: "logical crack"
