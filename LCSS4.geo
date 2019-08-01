@@ -37,7 +37,7 @@ Mesh.CharacteristicLengthFromCurvature = 0;
 Mesh.CharacteristicLengthExtendFromBoundary = 0;
 
 Field[1]           = Distance;
-Field[1].EdgesList = {{1,8,9,99}};
+Field[1].EdgesList = {{9,99}};
 
 Field[2]         = Threshold;
 Field[2].IField  = 1;
