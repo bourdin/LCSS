@@ -116,7 +116,7 @@ cs0020:
     boundaryDamage: 0
 cs0021:
     name: "crack upper face"
-    tempBC: yes
+    tempBC: no
     displacementbc: no,no,no
     displacementLowerBound: -1e+30,0.,0.
     damageBC: yes
