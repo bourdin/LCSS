@@ -32,7 +32,7 @@ def createParser():
     material.add_argument('--specificHeat', '--cp', type=float, default=1,help='Specific heat (0.35e3 - 1e3 [J/K/kg]')
     material.add_argument('--thermalConductivity', '--k', type=float, default=1.,help='Thermal conductivity (0.82 - 1.37) [J/s/K/m]')
     material.add_argument('--internalLength', type=float, default=4e-1,help='Internal Length [m]')
-    material.add_argument('--residualStiffness', type=float, default=1e-8,help='residual stiffness')
+    material.add_argument('--residualStiffness', type=float, default=1e-6,help='residual stiffness')
 
     vf = parser.add_argument_group('vDef parameters')
     vf.add_argument('--meshdir',help='Folder where meshes are stored',default='Meshes')
@@ -48,6 +48,7 @@ def createParser():
     vf.add_argument('--hypre',help='Use hypre as a preconditioner for the displacement field',default=False,action='store_true')
     vf.add_argument('--ml',help='Use ML as a preconditioner for the displacement field',default=False,action='store_true')
     vf.add_argument('--sor',help='SOR multiplier for alternate minimizations',type=float,default=1.)
+    vf.add_argument('--lf',help='logical crack length',type=float, default=None)
 
     misc = parser.add_argument_group('Miscellaneous')
     misc.add_argument('--mpiexec',help='mpi job launcher',default='mpiexec')

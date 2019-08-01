@@ -74,9 +74,9 @@ def main():
     ### Generate heat flux in output file
     # find the flux script within the path and pythonpath
     for binpath in sys.path+os.getenv('PATH').split(':'):
-        if os.path.exists(os.path.join(binpath,"LCSS_flux.py")):
+        if os.path.exists(os.path.join(binpath,"LCSS_flux2.py")):
             break
-    cmd = '{0} -i {1}.gen -o {1}_out.gen --cs 1 --force --initialPos {2} 0 0 --r0 {3} --Wabs {4}'.format(os.path.join(binpath,'LCSS_flux.py'),options.prefix,options.position,options.criticalRadius,options.intensity)
+    cmd = '{0} -i {1}.gen -o {1}_out.gen --cs 1 2 --force --initialPos {2} 0 0 --r0 {3} --Wabs {4} --initialTip {5} 0 0 --internalLength {6}'.format(os.path.join(binpath,'LCSS_flux2.py'),options.prefix,options.position,options.criticalRadius,options.intensity,options.lf,options.internalLength)
     print('Now running: {0}'.format(cmd))
     os.system(cmd)
 
@@ -95,11 +95,12 @@ def main():
     if options.hypre:
         cmd1 += ' -disp_pc_type hypre -disp_pc_hypre_type boomeramg -disp_pc_hypre_boomeramg_strong_threshold 0.9 '
     if options.ml:
-        cmd1 += ' -disp_pc_type ml '
-    if options.unilateralcontact == 'none':
-        cmd1 += ' -disp_snes_type ksponly'
+        cmd1 += ' -disp_pc_type ml'
+    #if options.unilateralcontact == 'none':
+    #    cmd1 += ' -disp_snes_type ksponly'
         
-    cmd += ' -temp_ksp_monitor_true_residual -temp_ksp_converged_reason'
+    #cmd1 += ' -temp_ksp_monitor_true_residual -temp_ksp_converged_reason'
+    cmd1 += ' -disp_snes_monitor'
 
 
     print("Now running: {0}".format(cmd1))
