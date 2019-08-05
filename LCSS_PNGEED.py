@@ -108,7 +108,7 @@ def draw(displacementScaling=.1,damageThreshold=.99,BB=None):
     ## Add pseudocolor plot of fracture field
     ##
 
-    AddPlot('Pseudocolor', 'EED')
+    AddPlot('Pseudocolor', 'EEDP')
     PseudocolorAtts = PseudocolorAttributes()
     PseudocolorAtts.scaling = PseudocolorAtts.Linear  # Linear, Log, Skew
     PseudocolorAtts.skewFactor = 1
@@ -277,7 +277,11 @@ def plot(options):
     DefineScalarExpression("sigma12", " 2.*{1} * e12".format(_lambda,_mu))
     
     DefineScalarExpression("VonMises","sqrt(sigma11^2 + 2.*sigma12^2 + sigma22^2 - (sigma11+sigma22)^2/2.)")                                                                                             
-    DefineScalarExpression("EED","(sigma11*ie11 + 2.*sigma12*e12 + sigma22*ie22)/2.")
+    DefineScalarExpression("EED","(sigma11*ie11 + 2.*sigma12*e12 + sigma22*ie22)/2.".format(_lambda,_mu))
+    DefineScalarExpression("EEDS","({0}+{1})*(ie11+ie22)^2/2.".format(_lambda,_mu))
+    DefineScalarExpression("EEDD","EED-EEDS")    
+    DefineScalarExpression("EEDM","({0}+{1})*min(0,ie11+ie22)^2/2.".format(_lambda,_mu))
+    DefineScalarExpression("EEDP","EED-EEDM".format(_lambda,_mu))
     BB = draw(options.displacementScaling,options.damageThreshold,options.BB)
 
     SetAnnotations()
@@ -294,7 +298,7 @@ def plot(options):
     if options.output != None:
         filename=os.path.splitext(options.output)[0]
     else:
-        filename = '{basename}-VM-{step:04d}'.format(basename = prefix,step=step)
+        filename = '{basename}-EEDP-{step:04d}'.format(basename = prefix,step=step)
     if options.bg == 'white':
         setBGWhite()
     else:
