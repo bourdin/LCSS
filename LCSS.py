@@ -10,6 +10,7 @@ def createParser():
     geom.add_argument('--height',type=float,default=50,help='Domain height m]')
     geom.add_argument('--thickness',type=float,default=1,help='Domain thickness [m]')
     geom.add_argument('--lc',type=float,default=10,help='Initial crack length [m]')
+    geom.add_argument('--lf',help='logical crack length',type=float, default=None)
     geom.add_argument('--order',type=float,default=1,choices = [1,2],help='finite element discretization order')
     geom.add_argument('--geofile',help='Name of the gmsh geo file',default='LCSS.geo')
     geom.add_argument('--hf',type=float,default=1.e-1,help='Fine mesh size [m]')
@@ -48,7 +49,6 @@ def createParser():
     vf.add_argument('--hypre',help='Use hypre as a preconditioner for the displacement field',default=False,action='store_true')
     vf.add_argument('--ml',help='Use ML as a preconditioner for the displacement field',default=False,action='store_true')
     vf.add_argument('--sor',help='SOR multiplier for alternate minimizations',type=float,default=1.)
-    vf.add_argument('--lf',help='logical crack length',type=float, default=None)
 
     misc = parser.add_argument_group('Miscellaneous')
     misc.add_argument('--mpiexec',help='mpi job launcher',default='mpiexec')
