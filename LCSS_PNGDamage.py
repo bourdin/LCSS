@@ -124,6 +124,7 @@ def draw(displacementScaling=.1,damageThreshold=.99,BB=None):
     PseudocolorAtts.legendFlag = 1
     PseudocolorAtts.lightingFlag = 0
     SetPlotOptions(PseudocolorAtts)
+    DrawPlots()
 
     AddOperator("Displace", 1)
     SetActivePlots(0)
