@@ -10,7 +10,7 @@
 
 cd $PBS_O_WORKDIR
 echo "now running"
-echo   ../python/LCSS_slurm.py --internalLength ${ELL} --fractureToughness ${GC} --order ${ORDER} --scanningSpeed ${SCANNINGSPEED} --hf ${HF} --hc ${HC} --width ${WIDTH} --height ${HEIGHT} --lc ${LC} --lf ${LF} --r ${R} --intensity ${INTENSITY} --position 0 --mpiexec mpirun --geofile ../python/LCSS4.geo --yamlfile ../python/LCSS4-AT1StaticHD.yaml --meshdir ../Meshes
+echo   ${LCSS_DIR}/LCSS_slurm.py --internalLength ${ELL} --fractureToughness ${GC} --order ${ORDER} --scanningSpeed ${SCANNINGSPEED} --hf ${HF} --hc ${HC} --width ${WIDTH} --height ${HEIGHT} --lc ${LC} --lf ${LF} --r ${R} --intensity ${INTENSITY} --position 0 --mpiexec mpirun --geofile ${LCSS_DIR}/LCSS4.geo --yamlfile ${LCSS_DIR}/LCSS4-AT1StaticHD.yaml --meshdir ${LCSS_DIR}/Meshes
 echo "   "
-python $LCSS_DIR/python/LCSS_slurm.py --internalLength ${ELL} --fractureToughness ${GC} --order ${ORDER} --scanningSpeed ${SCANNINGSPEED} --hf ${HF} --hc ${HC} --width ${WIDTH} --height ${HEIGHT} --lc ${LC} --lf ${LF} --r ${R} --intensity ${INTENSITY} --position 0 --mpiexec mpirun --geofile $LCSS_DIR/python/LCSS4.geo --yamlfile $LCSS_DIR/python/LCSS4-AT1StaticHD.yaml --meshdir $LCSS_DIR/Meshes
+python ${LCSS_DIR}/LCSS_slurm.py --internalLength ${ELL} --fractureToughness ${GC} --order ${ORDER} --scanningSpeed ${SCANNINGSPEED} --hf ${HF} --hc ${HC} --width ${WIDTH} --height ${HEIGHT} --lc ${LC} --lf ${LF} --r ${R} --intensity ${INTENSITY} --position 0 --mpiexec mpirun --geofile ${LCSS_DIR}/LCSS4.geo --yamlfile ${LCSS_DIR}/LCSS4-AT1StaticHD.yaml --meshdir ${LCSS_DIR}/Meshes
 

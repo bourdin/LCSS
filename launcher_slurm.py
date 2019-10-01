@@ -19,7 +19,7 @@ nc = 50
 step = 0
 
 for l in ll[nc*step:nc*(step+1)]:
-   cmd = "sbatch -N 4 -n 192 -p normal -t 00:20:00 -A TG-DMS060014 ../python/LCSS_slurm.py --scanningSpeed {0} --hf {1} --hc {2} --width {3} --height {4} --lc {5} --position 0  --mpiexec ibrun --geofile ../python/LCSS2.geo --yamlfile ../python/LCSS2.yaml --meshdir ../Meshes --order {6} --r {7}".format(scanningSpeed,hf,hc,width,height,l,order,r)
+   cmd = "sbatch -N 4 -n 192 -p normal -t 00:20:00 -A TG-DMS060014 ${LCSS_DIR}/LCSS_slurm.py --scanningSpeed {0} --hf {1} --hc {2} --width {3} --height {4} --lc {5} --position 0  --mpiexec ibrun --geofile ${LCSS_DIR}/LCSS2.geo --yamlfile ${LCSS_DIR}/LCSS2.yaml --meshdir ${LCSS_DIR}/Meshes --order {6} --r {7}".format(scanningSpeed,hf,hc,width,height,l,order,r)
    os.system(cmd)
    #print(cmd)
 
