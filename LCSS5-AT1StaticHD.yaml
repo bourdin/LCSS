@@ -44,8 +44,8 @@ disp:
         #lag:
         #    jacobian: 5
         #    preconditioner: 5
-    #pc:
-    #    type: bjacobi
+    pc:
+        type: bjacobi
 time:
     interpolation: exo
 cs0001:
