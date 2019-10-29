@@ -26,8 +26,8 @@ Line(9)  = {{1, 10}};
 Line(10) = {{10, 5}};
 Line Loop(1) = {{1,2,3,4,-10,-9}};
 Plane Surface(1) = {{1}};
-Line Loop(2) = {{9,10,5,6,7,8}};
-Plane Surface(2) = {{2}};
+Line Loop(20) = {{9,10,5,6,7,8}};
+Plane Surface(2) = {{20}};
 
 Line(99) = {{1,99}};
 
