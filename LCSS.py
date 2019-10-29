@@ -21,7 +21,11 @@ def createParser():
     beam.add_argument('--intensity','--I',type=float,default=1,help='Intensity (50 - 200) [W]')
     beam.add_argument('--criticalRadius','--r0',type=float,default=1,help='Critical radius (1e-4 - 1e-3)[m]')
     beam.add_argument('--scanningSpeed','--V',type=float,default=1,help='Beam scanning speed (~ 2.5e-3) [m/s]')
-    beam.add_argument('--position','--x0',type=float,default=0,help='Beam position in relation to the center of the plate(0) [m]')
+    beam.add_argument("--initialPos",type=float,nargs=3,help="Beam initial postion",default=[0.,0.,0.])
+    beam.add_argument("--finalPos",type=float,nargs=3,help="Beam final postion",default=[0.,0.,0.])
+    beam.add_argument("--time_min",type=float,default=0.,help='Start time')
+    beam.add_argument("--time_max",type=float,default=1.,help='End time')
+    beam.add_argument("--time_numstep",type=int,default=1,help='Number of time steps')
 
     material = parser.add_argument_group('Material')
     material.add_argument('--YoungsModulus', '--E', type=float, default=1, help="Young's modulus (~ 74e9) [Pa]")

@@ -76,7 +76,7 @@ def main():
     for binpath in sys.path+os.getenv('PATH').split(':'):
         if os.path.exists(os.path.join(binpath,"LCSS_flux2.py")):
             break
-    cmd = '{0} -i {1}.gen -o {1}_out.gen --cs 1 2 --force --initialPos {2} 0 0 --r0 {3} --Wabs {4} --initialTip {5} 0 0 --internalLength {6}'.format(os.path.join(binpath,'LCSS_flux2.py'),options.prefix,options.position,options.criticalRadius,options.intensity,options.lf,options.internalLength)
+    cmd = '{0} -i {prefix}.gen -o {prefix}_out.gen --cs 1 2 --force --initialPos {initialPos[0]}  {initialPos[1]} {initialPos[2]} --finalPos {finalPos[0]} {finalPos[1]} {finalPos[2]} --r0 {criticalRadius} --Wabs {intensity} --time_min {time_min} --time_max {time_max} --time_numstep {time_numstep}'.format(os.path.join(binpath,'LCSS_flux2.py'),**options.__dict__)
     print('Now running: {0}'.format(cmd))
     os.system(cmd)
 
