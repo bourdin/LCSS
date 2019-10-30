@@ -38,10 +38,13 @@ def main():
                       os.path.join(options.meshdir,options.hash+'.geo'),
                       options.__dict__)
             os.chdir(options.meshdir)
-            os.system('gmsh -2 -format msh2 -order {order} {hash}.geo'.format(**options.__dict__))
-            os.system('gmsh2exo.py --force {hash}.msh {hash}.gen'.format(**options.__dict__))            
-            #pymef90.Dictwritetxt(Geometry.__dict__,archmeshprefix+'.txt')
-            pymef90.DictwriteJSON(Geometry.__dict__,archmeshprefix+'.json')
+            cmd = 'gmsh -2 -format msh2 -order {order} {hash}.geo'.format(**options.__dict__)
+            print("Now running {0}".format(cmd))
+            os.system(cmd)
+
+            cmd = 'gmsh2exo.py --force {hash}.msh {hash}.gen'.format(**options.__dict__)
+            print("Now running {0}".format(cmd))
+            os.system(cmd)
 
 
     else:

@@ -102,12 +102,14 @@ def main():
     exoformat(exoout)
     
     T = np.linspace(options.time_min,options.time_max,options.time_numstep)
-    x0 = np.linspace(options.initialPos,options.finalPos,options.time_numstep)
+    x0 = np.linspace(options.initialPos[0],options.finalPos[0],options.time_numstep)
+    y0 = np.linspace(options.initialPos[1],options.finalPos[2],options.time_numstep)
+    z0 = np.linspace(options.initialPos[2],options.finalPos[2],options.time_numstep)
     for step in range(options.time_numstep):
-        print("Processing time step {0} (t={1:.2e}, x0={2})".format(step,T[step],x0[step]))
+        print("Processing time step {0} (t={1:.2e}, x0=[{2},{3},{4})".format(step,T[step],x0[step],y0[step],z0[step]))
         exoout.put_time(step+1,T[step])
         for cs in options.cs:
-            theta = beamProfile(exoout,options.Wabs,options.r0,x0[step],cs)
+            theta = beamProfile(exoout,options.Wabs,options.r0,[x0[step],y0[step],z0[step]],cs)
             exoout.put_element_variable_values(cs,"Heat_Flux",step+1,theta)
     exoout.close()
     
