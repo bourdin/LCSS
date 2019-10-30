@@ -7,7 +7,6 @@ r       = {r};
 lc      = {lc};
 lf      = {lf};
 epsc    = height/1000;
-beamPos = {finalPos[0]};
 
 Point(1)  = {{-width/2+lc,0,0,hf}};
 Point(2)  = {{-width/2,-epsc,0,hf}};
@@ -18,7 +17,9 @@ Point(6)  = {{width/2,height/2,0,hf}};
 Point(7)  = {{-width/2,height/2,0,hf}};
 Point(8)  = {{-width/2,epsc,0,hf}};
 Point(10) = {{-width/2+lf,0,0,hf}};
-Point(99) = {{beamPos,0,0,hf}};
+
+Point(98) = {{ {initialPos[0]}, {initialPos[1]}, {initialPos[2]}, hf }};
+Point(99) = {{ {finalPos[0]},   {finalPos[1]},   {finalPos[2]},   hf }};
 For i In {{1:8}}
         Line(i) = {{i,i%8+1}};
 EndFor
@@ -29,7 +30,7 @@ Plane Surface(1) = {{1}};
 Line Loop(20) = {{9,10,5,6,7,8}};
 Plane Surface(2) = {{20}};
 
-Line(99) = {{1,99}};
+Line(99) = {{98,99}};
 
 // Sizing function:
 Mesh.CharacteristicLengthFromPoints = 0;
