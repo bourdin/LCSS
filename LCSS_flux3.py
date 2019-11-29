@@ -47,18 +47,25 @@ def beamProfile(e,Wabs,r0,beamPos,cs):
     import exodus as exo
     import numpy as np
     
-
     dim = e.num_dimensions()
     X,Y,Z=e.get_coords()
-    theta = np.zeros(e.elem_blk_info(cs)[1])
+    numCells = e.elem_blk_info(cs)[1]
+    numVertexPerCell = e.elem_blk_info(cs)[2]
+    theta = np.zeros(numCells)
     
-    connect = e.get_elem_connectivity(cs)
-    for cid in np.arange(connect[1]):
-        vertices = [connect[0][cid*connect[2]+c]-1 for c in range(connect[2])]
-        x = np.average([X[v] for v in vertices])
-        y = np.average([Y[v] for v in vertices])
-        r = np.sqrt((x-beamPos[0])**2+(y-beamPos[1])**2)
-        theta[cid] = 2.*Wabs / np.pi / r0**2 * np.exp(-2.*(r/r0)**2)
+    cs_info = e.elem_blk_info(cs)
+    connect = e.get_elem_connectivity(cs)[0].reshape((cs_info[1],cs_info[2]))
+    def profile(r2):
+        return 2.*Wabs / np.pi / r0**2 * np.exp(-2.*(r2/r0)**2)
+    #theta = profile((np.sum(X[connect-1]-beamPos[0])**2 + np.sum(Y[connect-1]-beamPos[1])**2)/numVertexPerCell**2)
+    #theta = np.array([ profile(np.sqrt(np.average(X[cell-1])**2 + np.average(Y[cell-1])**2))  for cell in connect])
+    theta = np.array([ profile((np.sum(X[cell-1]-beamPos[0])**2 + np.sum(Y[cell-1]-beamPos[1])**2)/numVertexPerCell**2) for cell in connect])
+    # for cid in np.arange(connect[1]):
+    #     vertices = [connect[0][cid*connect[2]+c]-1 for c in range(connect[2])]
+    #     x = np.average([X[v] for v in vertices])
+    #     y = np.average([Y[v] for v in vertices])
+    #     r = np.sqrt((x-beamPos[0])**2+(y-beamPos[1])**2)
+    #     theta[cid] = 2.*Wabs / np.pi / r0**2 * np.exp(-2.*(r/r0)**2)
     return theta
 
 def damageProfile(e,ell,initialTip):
@@ -95,10 +102,13 @@ def main():
             else:
                 print ('\n\t{0} was NOT generated.\n'.format(options.outputfile))
                 return -1
-    exoin  = exo.exodus(options.inputfile,mode='r',array_type='numpy')
+    exoin  = exo.exodus(options.inputfile,array_type='numpy')
+
     exoout = exoin.copy(options.outputfile)
-    exoin.close()
     exoformat(exoout)
+    exoin.close()
+    exoout.close()
+    exoout  = exo.exodus(options.outputfile,mode='a',array_type='numpy')
     
     T = np.linspace(options.time_min,options.time_max,options.time_numstep)
     x0 = np.linspace(options.initialPos[0],options.finalPos[0],options.time_numstep)
