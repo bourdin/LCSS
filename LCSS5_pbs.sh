@@ -1,5 +1,5 @@
 #!/bin/bash
-#PBS -A hpc_vfrac2017b
+#PBS -A hpc_vfrac2017c
 #PBS -q workq
 #PBS -l nodes=10:ppn=16
 #PBS -l walltime=02:00:00
