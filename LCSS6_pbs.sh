@@ -1,3 +1,9 @@
+#PBS -A hpc_vfrac2017b
+#PBS -q workq
+#PBS -l walltime=06:00:00
+#PBS -o $PBS_JOBID.out
+#PBS -j oe
+#PBS -N LCSS6
 #PBS -V
 cd $PBS_O_WORKDIR
 echo "now running"
