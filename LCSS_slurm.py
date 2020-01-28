@@ -77,9 +77,9 @@ def main():
     ### Generate heat flux in output file
     # find the flux script within the path and pythonpath
     for binpath in sys.path+os.getenv('PATH').split(':'):
-        if os.path.exists(os.path.join(binpath,"LCSS_flux2.py")):
+        if os.path.exists(os.path.join(binpath,"LCSS_flux3.py")):
             break
-    cmd = '{0} -i {prefix}.gen -o {prefix}_out.gen --cs 1 2 --force --initialPos {initialPos[0]}  {initialPos[1]} {initialPos[2]} --finalPos {finalPos[0]} {finalPos[1]} {finalPos[2]} --r0 {criticalRadius} --Wabs {intensity} --time_min {time_min} --time_max {time_max} --time_numstep {time_numstep}'.format(os.path.join(binpath,'LCSS_flux2.py'),**options.__dict__)
+    cmd = '{0} -i {prefix}.gen -o {prefix}_out.gen --cs 1 2 --force --initialPos {initialPos[0]}  {initialPos[1]} {initialPos[2]} --finalPos {finalPos[0]} {finalPos[1]} {finalPos[2]} --r0 {criticalRadius} --Wabs {intensity} --time_min {time_min} --time_max {time_max} --time_numstep {time_numstep}'.format(os.path.join(binpath,'LCSS_flux3.py'),**options.__dict__)
     print('Now running: {0}'.format(cmd))
     os.system(cmd)
 
