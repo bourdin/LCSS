@@ -103,12 +103,12 @@ def getlaststep(fname):
   return(int(laststep))
 
 
-def draw(displacementScaling=.1,damageThreshold=.99,BB=None):
+def draw(displacementScaling=.1,damageThreshold=.99,eedmax=-1,BB=None):
     ##
     ## Add pseudocolor plot of fracture field
     ##
 
-    AddPlot('Pseudocolor', 'EEDP')
+    AddPlot('Pseudocolor', 'EED')
     PseudocolorAtts = PseudocolorAttributes()
     PseudocolorAtts.scaling = PseudocolorAtts.Linear  # Linear, Log, Skew
     PseudocolorAtts.skewFactor = 1
@@ -123,6 +123,9 @@ def draw(displacementScaling=.1,damageThreshold=.99,BB=None):
     PseudocolorAtts.smoothingLevel = 0
     PseudocolorAtts.legendFlag = 1
     PseudocolorAtts.lightingFlag = 0
+    if eedmax > 0:
+        PseudocolorAtts.maxFlag = 1
+        PseudocolorAtts.max = eedmax
     SetPlotOptions(PseudocolorAtts)
 
     AddOperator("Displace", 1)
@@ -282,7 +285,7 @@ def plot(options):
     DefineScalarExpression("EEDD","EED-EEDS")    
     DefineScalarExpression("EEDM","({0}+{1})*min(0,ie11+ie22)^2/2.".format(_lambda,_mu))
     DefineScalarExpression("EEDP","EED-EEDM".format(_lambda,_mu))
-    BB = draw(options.displacementScaling,options.damageThreshold,options.BB)
+    BB = draw(options.displacementScaling,options.damageThreshold,options.eedmax,options.BB)
 
     SetAnnotations()
     DrawPlots()
@@ -295,19 +298,39 @@ def plot(options):
     else:
         geometry = (int(2048.*W/H),2048)
 
-    if options.output != None:
-        filename=os.path.splitext(options.output)[0]
-    else:
-        filename = '{basename}-EEDP-{step:04d}'.format(basename = prefix,step=step)
+    # SetActivePlots(0)
+    # ChangeActivePlotsVar("EEDM")
+    # DrawPlots()
+    # filename = '{basename}-EEDM-{step:04d}'.format(basename = prefix,step=step)
+    # if options.bg == 'white':
+    #     setBGWhite()
+    # else:
+    #     setBGBlack()
+    # status = savePNG(filename,geometry)
+
+    # SetActivePlots(0)
+    # ChangeActivePlotsVar("EEDP")
+    # DrawPlots()
+    # filename = '{basename}-EEDP-{step:04d}'.format(basename = prefix,step=step)
+    # if options.bg == 'white':
+    #     setBGWhite()
+    # else:
+    #     setBGBlack()
+    # status = savePNG(filename,geometry)
+    # DeleteAllPlots()
+    # CloseDatabase(MyDatabase)
+
+    SetActivePlots(0)
+    ChangeActivePlotsVar("EED")
+    DrawPlots()
+    filename = '{basename}-EED-{step:04d}'.format(basename = prefix,step=step)
     if options.bg == 'white':
         setBGWhite()
     else:
         setBGBlack()
     status = savePNG(filename,geometry)
-
-    DeleteAllPlots()
-    CloseDatabase(MyDatabase)
     return 0
+
 
 def parse(args=None):
     import argparse
@@ -319,7 +342,8 @@ def parse(args=None):
     parser.add_argument('--damageThreshold',type=float,default=.99)
     parser.add_argument('--YoungsModulus',type=float,default=1)
     parser.add_argument('--PoissonRatio',type=float,default=.23)
-    parser.add_argument('--output',default=None)
+    #parser.add_argument('--output',default=None)
+    parser.add_argument('--eedmax',type=float,default=-1.)
     parser.add_argument('--force',default=False,action='store_true')
     parser.add_argument('inputfile',help='input file')
     return parser.parse_args()
@@ -329,11 +353,13 @@ if __name__ == "__main__":
     import os.path
 
     options = parse()
-    if os.path.exists(options.inputfile) and (not os.path.exists(options.output)  or options.force):
-        print('processing {0}'.format(options.inputfile)) 
-        plot(options)   
-        sys.exit(0)
-    else:
-        print('output file exists, or input file does not exist. Exiting...')
-        sys.exit(-1)
+    plot(options)   
+    sys.exit(0)
+    # if os.path.exists(options.inputfile) and (not os.path.exists(options.output)  or options.force):
+    #     print('processing {0}'.format(options.inputfile)) 
+    #     plot(options)   
+    #     sys.exit(0)
+    # else:
+    #     print('output file exists, or input file does not exist. Exiting...')
+    #     sys.exit(-1)
 
