@@ -26,6 +26,8 @@ defmech:
     #sor:
     #    omega: 1.4
     pclag: 1
+    dampingCoefficient:
+        displacement: {damping}
 heatxfer:
     timestepping:
         type: steadystate
@@ -48,7 +50,7 @@ disp:
     pc:
         type: ml
     ksp:
-        type: bcgsl
+        type: bcgs
         atol: 1.0e-7
         rtol: 1.0e-5
 time:

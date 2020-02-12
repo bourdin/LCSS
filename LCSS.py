@@ -53,6 +53,7 @@ def createParser():
     vf.add_argument('--hypre',help='Use hypre as a preconditioner for the displacement field',default=False,action='store_true')
     vf.add_argument('--ml',help='Use ML as a preconditioner for the displacement field',default=False,action='store_true')
     vf.add_argument('--sor',help='SOR multiplier for alternate minimizations',type=float,default=1.)
+    vf.add_argument('--damping',help='Damping term on displacement',type=float,default=0.)
 
     misc = parser.add_argument_group('Miscellaneous')
     misc.add_argument('--mpiexec',help='mpi job launcher',default='mpiexec')
