@@ -34,19 +34,35 @@ def main():
             print('{0}.gen not found: generating new mesh'.format(archmeshprefix))
             if not os.path.exists(options.meshdir):
                 os.makedirs(options.meshdir)
-            pymef90.argsWrite(options.geofile,
-                      os.path.join(options.meshdir,options.hash+'.geo'),
-                      options.__dict__)
-            os.chdir(options.meshdir)
-            cmd = 'gmsh -2 -format msh2 -order {order} {hash}.geo'.format(**options.__dict__)
-            print("Now running {0}".format(cmd))
-            os.system(cmd)
+            ext = os.path.splitext(options.geofile)[-1][1:].lower()
+            if ext == 'geo':
+                pymef90.argsWrite(options.geofile,
+                          os.path.join(options.meshdir,options.hash+'.geo'),
+                          options.__dict__)
+                os.chdir(options.meshdir)
+                cmd = 'gmsh -2 -format msh2 -order {order} {hash}.geo'.format(**options.__dict__)
+                print("Now running {0}".format(cmd))
+                os.system(cmd)
 
-            cmd = 'gmsh2exo.py --force {hash}.msh {hash}.gen'.format(**options.__dict__)
-            print("Now running {0}".format(cmd))
-            os.system(cmd)
+                cmd = 'gmsh2exo.py --force {hash}.msh {hash}.gen'.format(**options.__dict__)
+                print("Now running {0}".format(cmd))
+                os.system(cmd)
+            elif ext == 'jou':
 
-
+                pymef90.argsWrite(options.geofile,
+                          os.path.join(options.meshdir,options.hash+'.jou'),
+                          options.__dict__)
+                os.chdir(options.meshdir)
+                journal = open(os.path.join(options.meshdir,options.hash+'.jou'))
+                import cubit
+                cubit.init([''])
+                for l in journal.readlines():
+                    cubit.cmd(l)
+                cubit.cmd('set exodus netcdf4 off')
+                cubit.cmd('set large exodus file on')
+                cubit.cmd('export mesh "{0}.gen"  dimension 2  overwrite '.format(os.path.join(options.meshdir,options.hash)))
+            else: 
+                print("unknown geometry file format {0}. Unable to generate mesh".format(options.geofile))
     else:
         print("Found matching mesh at {0}".format(archmeshprefix))
 

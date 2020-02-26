@@ -1,0 +1,62 @@
+reset
+
+#{{width   = {width} }}
+#{{height  = {height} }}
+#{{hf      = {hf}     }}
+#{{hc      = {hc}     }}
+#{{r       = {r}      }}
+#{{lc      = {lc}     }}
+#{{lf      = {lf}     }}
+
+#{{epsc    = height / 1000.}}
+
+create vertex x {{-width/2+lc}} y 0           z 0
+create vertex x {{-width/2}}    y {{-epsc}}     z 0
+create vertex x {{-width/2}}    y {{-height/2}} z 0
+create vertex x {{ width/2}}    y {{-height/2}} z 0
+create vertex x {{ width/2}}    y {{ height/2}} z 0
+create vertex x {{-width/2}}    y {{ height/2}} z 0
+create vertex x {{-width/2}}    y {{ epsc}}     z 0
+create surface vertex all
+
+create vertex x {{-width/2+lc+lf}} y 0 z 0
+create curve vertex 1 8  
+imprint volume 1 with curve 8 tolerant
+
+webcut body all plane yplane offset {{4*r}}
+webcut body all plane yplane offset {{r/2}}
+webcut body all plane yplane offset {{-r/2}}
+webcut body all plane yplane offset {{-4*r}}
+
+imprint all 
+merge all
+
+surface 3 7 8 scheme triadv 
+
+surface 7 size {{hf}}
+mesh surface 7
+
+surface 3 8 size {{hc}}
+mesh surface 3
+mesh surface 8
+
+surface 5 9 scheme tridelaunay
+surface 5 sizing function bias start curve 16 finish curve 10
+surface 9 sizing function bias start curve 22 finish curve 28
+mesh surface 5 9
+
+surface 5 9 smooth scheme centroid area pull 
+smooth surface 5 9
+
+block 1 surface 5 7 8
+block 2 surface 5 9
+block 10 curve 3 5
+block 11 curve with x_max = {{-width/2}}
+block 12 curve with x_min = {{ width/2}}
+block 20 curve 1
+block 21 curve 7
+block 30 curve 8
+
+nodeset 300 vertex 3
+nodeset 302 vertex 6
+nodeset 400 vertex 1
