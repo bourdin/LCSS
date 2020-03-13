@@ -32,7 +32,7 @@ split curve 22 at vertex 8
 imprint all 
 merge all
 
-surface 3 7 9 10  scheme triadv 
+surface 3 7 9 10  scheme trimesh
 
 surface 7 9 size {{hf}}
 mesh surface 7
