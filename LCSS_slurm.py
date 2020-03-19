@@ -119,7 +119,7 @@ def main():
     #    cmd1 += ' -disp_snes_type ksponly'
         
     #cmd1 += ' -temp_ksp_monitor_true_residual -temp_ksp_converged_reason'
-    cmd1 += ' -disp_snes_monitor'
+    cmd1 += ' -disp_snes_monitor -disp_ksp_converged_reason' 
 
 
     print("Now running: {0}".format(cmd1))

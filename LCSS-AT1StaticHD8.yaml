@@ -25,7 +25,7 @@ defmech:
         type: AltMin
     #sor:
     #    omega: 1.4
-    pclag: 1
+    pclag: 5
     dampingCoefficient:
         displacement: {damping}
 heatxfer:
@@ -42,16 +42,17 @@ temp:
 disp:
     snes:
         type: ls
-        #linesearch:
-        #    type: basic
-        #    damping: 1.0
+        linesearch:
+            type: basic
+            damping: 1.0
         lag:
-            #jacobian: 5
-            #preconditioner: 5
+            preconditioner: 5
+        atol: 1.0e-7
+        rtol: 1.0e-5
     ksp:
         type: cg
-        #atol: 1.e-7
-        #rtol: 1.e-7
+        atol: 1.e-7
+        rtol: 1.e-5
     pc:
         type: ml
 time:
