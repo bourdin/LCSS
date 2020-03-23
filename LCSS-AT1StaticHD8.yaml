@@ -25,7 +25,7 @@ defmech:
         type: AltMin
     #sor:
     #    omega: 1.4
-    pclag: 5
+    pclag: 2
     dampingCoefficient:
         displacement: {damping}
 heatxfer:
@@ -46,7 +46,7 @@ disp:
             type: basic
             damping: 1.0
         lag:
-            preconditioner: 5
+            preconditioner: 2
         atol: 1.0e-7
         rtol: 1.0e-5
     ksp:
