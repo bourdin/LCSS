@@ -257,8 +257,8 @@ def plot(options):
         stepmax = options.step_max
     stepmin = options.step_min
 
-     
-    Open the database
+
+    ### Open the database
     
     MyDatabase = options.inputfile
       
