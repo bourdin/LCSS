@@ -277,9 +277,9 @@ def plot(options):
     W = BB[1]-BB[0]
     H = BB[3]-BB[2]
     if W > H:
-        geometry = (2048,int(2048.*H/W))
+        geometry = (2048,2*int(2048.*H/W/2.))
     else:
-        geometry = (int(2048.*W/H),2048)
+        geometry = (2*int(2048.*W/H/2.),2048)
 
     if options.bg == 'white':
         setBGWhite()
@@ -298,6 +298,7 @@ def plot(options):
     #cmd = 'ffmpeg -y -i Frames/{prefix}-%04d.png -vcodec mjpeg -qscale 1  {prefix}.avi'.format(prefix=prefix)
     cmd = 'ffmpeg -y -i {rootdir}/Frames/{prefix}-%04d-disp{displacementScaling:.2f}.png -f mp4 -vcodec h264 -pix_fmt yuv420p  {rootdir}/{prefix}-disp{displacementScaling:.2f}.mp4'.format(rootdir=rootdir,prefix=prefix,**options.__dict__)
     if cmd_exists('ffmpeg'):
+        print('\n\t running {0}\n'.format(cmd))
         os.system(cmd)
     else:
         print('\t{0}'.format(cmd))
