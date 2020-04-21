@@ -102,6 +102,11 @@ def main():
     import os
     import pymef90
     options = parse()
+
+    print(exo.__file__)
+    print(exo.EXODUS_PY_VERSION)
+    print(exo.EXODUS_LIB)
+    print(exo.getExodusVersion())
     
     if  os.path.exists(options.outputfile):
         if options.force:
@@ -112,13 +117,16 @@ def main():
             else:
                 print ('\n\t{0} was NOT generated.\n'.format(options.outputfile))
                 return -1
-    exoin  = exo.exodus(options.inputfile,array_type='numpy')
+    #exoin  = exo.exodus(options.inputfile,array_type='numpy')
 
-    exoout = exoin.copy(options.outputfile)
+    #exoout = exoin.copy(options.outputfile)
+    exoout = exo.copy_mesh(options.inputfile,options.outputfile, array_type='numpy')
+
+    # exoformat(exoout)
+    #exoin.close()
+    # exoout.close()
+    # exoout  = exo.exodus(options.outputfile,mode='a',array_type='numpy')
     exoformat(exoout)
-    exoin.close()
-    exoout.close()
-    exoout  = exo.exodus(options.outputfile,mode='a',array_type='numpy')
     
     #T = np.linspace(options.time_min,options.time_max,options.time_numstep)
     x0 = np.linspace(options.initialPos[0],options.finalPos[0],options.time_numstep)
