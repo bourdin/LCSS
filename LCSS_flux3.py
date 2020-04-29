@@ -103,11 +103,6 @@ def main():
     import pymef90
     options = parse()
 
-    print(exo.__file__)
-    print(exo.EXODUS_PY_VERSION)
-    print(exo.EXODUS_LIB)
-    print(exo.getExodusVersion())
-    
     if  os.path.exists(options.outputfile):
         if options.force:
             os.remove(options.outputfile)
@@ -117,15 +112,18 @@ def main():
             else:
                 print ('\n\t{0} was NOT generated.\n'.format(options.outputfile))
                 return -1
-    #exoin  = exo.exodus(options.inputfile,array_type='numpy')
+    exoin  = exo.exodus(options.inputfile,mode='r')
+    exoout = exoin.copy(options.outputfile)
+    exoout.close()
+    exoout  = exo.exodus(options.outputfile,mode='a',array_type='numpy')
+    ### Adding a QA record, needed until visit fixes its exodus reader
+    import datetime
+    import os.path
+    import sys
+    QA_rec_len = 32
+    QA = [os.path.basename(sys.argv[0]),os.path.basename(__file__),datetime.date.today().strftime('%Y%m%d'),datetime.datetime.now().strftime("%H:%M:%S")]
+    exoout.put_qa_records([[ q[0:31] for q in QA],])
 
-    #exoout = exoin.copy(options.outputfile)
-    exoout = exo.copy_mesh(options.inputfile,options.outputfile, array_type='numpy')
-
-    # exoformat(exoout)
-    #exoin.close()
-    # exoout.close()
-    # exoout  = exo.exodus(options.outputfile,mode='a',array_type='numpy')
     exoformat(exoout)
     
     #T = np.linspace(options.time_min,options.time_max,options.time_numstep)
@@ -138,7 +136,7 @@ def main():
         print("Computing cell center coordinates for set {0}".format(cs))
         cellCenters[cs] = cellCenter(exoout,cs)
     for step in range(options.time_numstep):
-        print("Processing time step {0} (x0=[{1},{2},{3})".format(step,x0[step],y0[step],z0[step]))
+        print("Processing time step {0} (x0=[{1},{2},{3}])".format(step,x0[step],y0[step],z0[step]))
         exoout.put_time(step+1,x0[step])
         for cs in options.cs:
             theta = beamProfile(exoout,options.Wabs,options.r0,[x0[step],y0[step],z0[step]],cs,cellCenters[cs])
