@@ -19,7 +19,10 @@ def main():
     Geometry = pymef90.parseGroup(parser,options,'Geometry')
     str = repr(Geometry).encode("utf-8")
     options.hash = hashlib.sha1(str).hexdigest()
+    D = options.__dict__
+    D['dt'] = (options.time_max - options.time_min) / (options.time_numstep-1)/options.time_numsubstep
     options.__dict__ = pymef90.PrepareJob(Geometry,options.__dict__)
+    print(options)
     scriptpath = os.path.dirname(os.path.abspath(__file__))
 
     ###
@@ -60,6 +63,7 @@ def main():
                     cubit.cmd(l)
                 cubit.cmd('set exodus netcdf4 off')
                 cubit.cmd('set large exodus file on')
+                cubit.cmd('set journal off')
                 cubit.cmd('export mesh "{0}.gen"  dimension 2  overwrite '.format(os.path.join(options.meshdir,options.hash)))
             else: 
                 print("unknown geometry file format {0}. Unable to generate mesh".format(options.geofile))

@@ -26,6 +26,7 @@ def createParser():
     beam.add_argument("--time_min",type=float,default=0.,help='Start time')
     beam.add_argument("--time_max",type=float,default=1.,help='End time')
     beam.add_argument("--time_numstep",type=int,default=1,help='Number of time steps')
+    beam.add_argument("--time_numsubstep",type=int,default=2,help='Number of transient heat solver step for each mechanics substep')
 
     material = parser.add_argument_group('Material')
     material.add_argument('--YoungsModulus', '--E', type=float, default=1, help="Young's modulus (~ 74e9) [Pa]")

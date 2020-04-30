@@ -54,7 +54,7 @@ def beamProfile(e,Wabs,r0,beamPos,cs,cellCenters):
     theta = np.zeros(numCells)
     
     def profile(r):
-        return 2.*Wabs / np.pi / r0**2 * np.exp(-2.*(r**2/r0)**2)
+        return 2.*Wabs / np.pi / r0**2 * np.exp(-2.*(r/r0)**2)
 
     r = np.sqrt( (cellCenters[:,0]-beamPos[0])**2 + (cellCenters[:,1]-beamPos[1])**2)
     theta = profile(r)
@@ -126,7 +126,7 @@ def main():
 
     exoformat(exoout)
     
-    #T = np.linspace(options.time_min,options.time_max,options.time_numstep)
+    T = np.linspace(options.time_min,options.time_max,options.time_numstep)
     x0 = np.linspace(options.initialPos[0],options.finalPos[0],options.time_numstep)
     y0 = np.linspace(options.initialPos[1],options.finalPos[2],options.time_numstep)
     z0 = np.linspace(options.initialPos[2],options.finalPos[2],options.time_numstep)
@@ -136,8 +136,8 @@ def main():
         print("Computing cell center coordinates for set {0}".format(cs))
         cellCenters[cs] = cellCenter(exoout,cs)
     for step in range(options.time_numstep):
-        print("Processing time step {0} (x0=[{1},{2},{3}])".format(step,x0[step],y0[step],z0[step]))
-        exoout.put_time(step+1,x0[step])
+        print("Processing time step {0}  (t={4:.2e}, x0=[{1:.2e},{2:.2e},{3:.2e}])".format(step,x0[step],y0[step],z0[step],T[step]))
+        exoout.put_time(step+1,T[step])
         for cs in options.cs:
             theta = beamProfile(exoout,options.Wabs,options.r0,[x0[step],y0[step],z0[step]],cs,cellCenters[cs])
             exoout.put_element_variable_values(cs,"Heat_Flux",step+1,theta)
