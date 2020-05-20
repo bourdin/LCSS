@@ -1,6 +1,4 @@
 #!/usr/bin/env python
-import sys
-
 def parse(args=None):
     import argparse
     alpha_L = 9
@@ -71,7 +69,6 @@ def beamProfile(e,Wabs,r0,beamPos,cs,cellCenters):
     return theta
 
 def cellCenter(e,cs):
-    import exodus as exo
     import numpy as np
     
     dim              = e.num_dimensions()
@@ -107,7 +104,6 @@ def damageProfile(e,ell,initialTip):
     return alpha
 
 def main():
-    import exodus as exo
     import numpy as np
     import os
     import pymef90
@@ -161,5 +157,10 @@ def main():
     exoout.close()
     
 if __name__ == "__main__":
-        sys.exit(main())
+    import sys
+    if sys.version_info.major == 3:
+        import exodus3 as exo
+    else:
+        import exodus2 as exo
+    sys.exit(main())
 
