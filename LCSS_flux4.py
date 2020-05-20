@@ -3,24 +3,34 @@ import sys
 
 def parse(args=None):
     import argparse
+    alpha_L = 9
+    beta = 90e-6
+    d = 7e-4
+    r0 = 1.0e-4
+    rho = 2.48e3
+    cp = 1.5e3
+    V = 2.5e-3
+    k = 1.
+
+    t0 = rho * cp * r0**2/k
+    x0 = r0
+
     ### Get options from the command line
     parser = argparse.ArgumentParser(description='Compute boundary displacement for a surfing computation')
     parser.add_argument('-i','--inputfile',help='input file',default=None)
     parser.add_argument('-o','--outputfile',help='output file',default=None)
-    parser.add_argument("--Wabs",type=float,help="Absorbed flux per unit of surface",default=1.)    
-    parser.add_argument("--r0",type=float,default=1.,help='Beam critical radius')
-    parser.add_argument("--initialPos",type=float,nargs=3,help="Beam initial postion",default=[0.,0.,0.])
-    parser.add_argument("--finalPos",type=float,nargs=3,help="Beam final postion",default=[0.,0.,0.])
-    parser.add_argument("--initialTip",type=float,nargs=3,help="Logical crack tip initial position",default=None)
-    parser.add_argument("--internalLength",type=float,help="internal length",default=0)
+    parser.add_argument('--pathfile',help='File describing the beam path',default=None)
+    parser.add_argument("--d",type=float,help="Plate thickness [m]",default=7.e-4)
+    parser.add_argument("--alpha",type=float,help="Glass absorbtion coefficient [m^-1]",default=9.)    
+    parser.add_argument("--r0",type=float,default=1.e-4,help='Beam critical radius [m]')
+    parser.add_argument("--dt",type=float,default=1,help='Time step size [s]')
+
+    parser.add_argument("--x0",type=float,default=r0,help='Space rescaling factor for numerical simulations [1]')
+    parser.add_argument("--t0",type=float,default=t0,help='Time scaling factor for numerical simulation [m]')
+
     parser.add_argument("--cs",type=int,nargs='*',help="list of cell sets where the beam is applied",default=[1,])
     parser.add_argument("--force",action="store_true",default=False,help="Overwrite existing files without prompting")
-    parser.add_argument("--time_min",type=float,default=0.,help='Start time')
-    parser.add_argument("--time_max",type=float,default=1.,help='End time')
-    parser.add_argument("--time_numstep",type=int,default=1,help='Number of time steps')
     options = parser.parse_args()
-    if options.initialTip == None:
-        options.initialTip = options.initialPos
     return options
     
 def exoformat(e):
@@ -54,7 +64,7 @@ def beamProfile(e,Wabs,r0,beamPos,cs,cellCenters):
     theta = np.zeros(numCells)
     
     def profile(r):
-        return 2.*Wabs / np.pi / r0**2 * np.exp(-2.*(r**2/r0)**2)
+        return 2.*Wabs / np.pi / r0**2 * np.exp(-2.*(r/r0)**2)
 
     r = np.sqrt( (cellCenters[:,0]-beamPos[0])**2 + (cellCenters[:,1]-beamPos[1])**2)
     theta = profile(r)
@@ -102,7 +112,7 @@ def main():
     import os
     import pymef90
     options = parse()
-    
+
     if  os.path.exists(options.outputfile):
         if options.force:
             os.remove(options.outputfile)
@@ -112,29 +122,42 @@ def main():
             else:
                 print ('\n\t{0} was NOT generated.\n'.format(options.outputfile))
                 return -1
-    exoin  = exo.exodus(options.inputfile,array_type='numpy')
-
+    exoin  = exo.exodus(options.inputfile,mode='r')
     exoout = exoin.copy(options.outputfile)
-    exoformat(exoout)
-    exoin.close()
     exoout.close()
     exoout  = exo.exodus(options.outputfile,mode='a',array_type='numpy')
-    
-    T = np.linspace(options.time_min,options.time_max,options.time_numstep)
-    x0 = np.linspace(options.initialPos[0],options.finalPos[0],options.time_numstep)
-    y0 = np.linspace(options.initialPos[1],options.finalPos[2],options.time_numstep)
-    z0 = np.linspace(options.initialPos[2],options.finalPos[2],options.time_numstep)
+    ### Adding a QA record, needed until visit fixes its exodus reader
+    import datetime
+    import os.path
+    import sys
+    QA_rec_len = 32
+    QA = [os.path.basename(sys.argv[0]),os.path.basename(__file__),datetime.date.today().strftime('%Y%m%d'),datetime.datetime.now().strftime("%H:%M:%S")]
+    exoout.put_qa_records([[ q[0:31] for q in QA],])
 
+    exoformat(exoout)
+    
     cellCenters = {}
     for cs in options.cs:
         print("Computing cell center coordinates for set {0}".format(cs))
         cellCenters[cs] = cellCenter(exoout,cs)
-    for step in range(options.time_numstep):
-        print("Processing time step {0} (t={1:.2e}, x0=[{2},{3},{4})".format(step,T[step],x0[step],y0[step],z0[step]))
-        exoout.put_time(step+1,T[step])
-        for cs in options.cs:
-            theta = beamProfile(exoout,options.Wabs,options.r0,[x0[step],y0[step],z0[step]],cs,cellCenters[cs])
-            exoout.put_element_variable_values(cs,"Heat_Flux",step+1,theta)
+
+    beamPath = np.loadtxt(options.pathfile)
+    substep = 0
+    for step in range(beamPath.shape[0]-1):
+        print("Processing path line {0}  (t={1:.2e}-{2:.2e}, x0={3:.2e}-{4:.2e}, y0={5:.2e}-{6:.2e}, W={7:.2e}-{8:.2e})".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
+        nstep = int((beamPath[step+1][0] - beamPath[step][0]) / options.dt) + 1
+        print("nstep", nstep, beamPath[step+1][0] - beamPath[step][0])
+        T  = np.linspace(beamPath[step][0]/options.t0,beamPath[step+1][0]/options.t0,nstep)
+        X0 = np.linspace(beamPath[step][1]/options.x0,beamPath[step+1][1]/options.x0,nstep)
+        Y0 = np.linspace(beamPath[step][2]/options.x0,beamPath[step+1][2]/options.x0,nstep)
+        W  = np.linspace(beamPath[step][3] * (1.- np.exp(-options.alpha * options.d)),beamPath[step+1][3] * (1.- np.exp(-options.alpha * options.d)),nstep)
+        for t,x0,y0,w in zip(T,X0,Y0,W):
+            substep += 1
+            print("   time step {4}: t={0:.2e}, x0={1:.2e}, y0={2:.2e}, W={3:.2e}])".format(t,x0,y0,w,substep))
+            exoout.put_time(substep,t)
+            for cs in options.cs:
+                theta = beamProfile(exoout,w,options.r0 / options.x0,[x0,y0,0],cs,cellCenters[cs])
+                exoout.put_element_variable_values(cs,"Heat_Flux",substep,theta)
     exoout.close()
     
 if __name__ == "__main__":
