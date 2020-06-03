@@ -161,12 +161,12 @@ def main():
         W = np.linspace(beamPath[step][3],beamPath[step+1][3],nstep)
         for t,x,y,w in zip(T,X,Y,W):
             substep += 1
-            print("   time step {4}: t={0:.2e}, x0={1:.2e}, y0={2:.2e}, W={3:.2e}])".format(t/t0,x/x0,y/x0,w * absCoef,substep))
+            print("   time step {4}: \t t~={0:.2e}, x~={1:.2e}, y~={2:.2e}, W~={3:.2e}".format(t/t0,x/x0,y/x0,w * absCoef,substep))
+            print("                     \t t ={0:.2e}, x ={1:.2e}, y ={2:.2e}, W ={3:.2e}".format(t,x,y,w,substep))
             beamLoc.write("{0} {1:.2e} {2:.2e} {3:.2e} {4:.2e}    {5:.2e} {6:.2e} {7:.2e} {8:.2e}\n".format(substep,t,x,y,w,t/t0,x/x0,y/x0,w*absCoef))
-            exoout.put_time(substep,t)
+            exoout.put_time(substep,t/t0)
             for cs in options.cs:
-                # Here we do not divise x and y by x0 becasue we assume that the mesh has been rescaled by x0 already
-                theta = beamProfile(exoout,w,options.r0 / options.x0,[x,y,0],cs,cellCenters[cs])
+                theta = beamProfile(exoout,w*absCoef,options.r0 / options.x0,[x/x0,y/x0,0],cs,cellCenters[cs])
                 exoout.put_element_variable_values(cs,"Heat_Flux",substep,theta)
     exoout.close()
     beamLoc.close()
