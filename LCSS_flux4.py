@@ -141,7 +141,7 @@ def main():
     print("Using a time rescaling factor of {0:.4e} in the file".format(options.t0))
     beamPath = np.loadtxt(options.pathfile)
     beamLoc = open("beam.txt","w")
-    beamLoc.write("# step   t   x   y   I   t~   x~   y~   I~")
+    beamLoc.write("# step   t   x   y   I   t~   x~   y~   I~\n")
 
     absCoef = 1.- np.exp(-options.alpha * options.d) 
     x0 = options.x0
@@ -149,13 +149,12 @@ def main():
 
     substep = 0
     for step in range(beamPath.shape[0]-1):
-        print("Processing path line {0}\t (t={1:.2e}-{2:.2e},  x={3:.2e}-{4:.2e},  y={5:.2e}-{6:.2e},  W={7:.2e}-{8:.2e})".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
-        print("                        \t (t~={1:.2e}-{2:.2e}, x~={3:.2e}-{4:.2e}, y~={5:.2e}-{6:.2e}, W~={7:.2e}-{8:.2e})".format(step,beamPath[step][0]/t0,beamPath[step+1][0]/t0,beamPath[step][1],beamPath[step+1][1]/x0,beamPath[step][2]/x0,beamPath[step+1][2]/x0,beamPath[step][3]/x0,beamPath[step+1][3]*absCoef))
-        beamLoc.write("# path line {0} \t (t={1:.2e}-{2:.2e},  x={3:.2e}-{4:.2e},  y={5:.2e}-{6:.2e},  W={7:.2e}-{8:.2e})\n".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
-        beamLoc.write("#               \t (t~={1:.2e}-{2:.2e}, x~={3:.2e}-{4:.2e}, y~={5:.2e}-{6:.2e}, W~={7:.2e}-{8:.2e})\n".format(step,beamPath[step][0]/t0,beamPath[step+1][0]/t0,beamPath[step][1],beamPath[step+1][1]/x0,beamPath[step][2]/x0,beamPath[step+1][2]/x0,beamPath[step][3]/x0,beamPath[step+1][3]*absCoef))
+        print("Processing path line {0} (t={1:.2e}-{2:.2e},  x={3:.2e}-{4:.2e},  y={5:.2e}-{6:.2e},  W={7:.2e}-{8:.2e})".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
+        print("                       (t~={1:.2e}-{2:.2e}, x~={3:.2e}-{4:.2e}, y~={5:.2e}-{6:.2e}, W~={7:.2e}-{8:.2e})".format(step,beamPath[step][0]/t0,beamPath[step+1][0]/t0,beamPath[step][1],beamPath[step+1][1]/x0,beamPath[step][2]/x0,beamPath[step+1][2]/x0,beamPath[step][3]/x0,beamPath[step+1][3]*absCoef))
+        beamLoc.write("# path line {0} (t={1:.2e}-{2:.2e},  x={3:.2e}-{4:.2e},  y={5:.2e}-{6:.2e},  W={7:.2e}-{8:.2e})\n".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
+        beamLoc.write("#             (t~={1:.2e}-{2:.2e}, x~={3:.2e}-{4:.2e}, y~={5:.2e}-{6:.2e}, W~={7:.2e}-{8:.2e})\n".format(step,beamPath[step][0]/t0,beamPath[step+1][0]/t0,beamPath[step][1],beamPath[step+1][1]/x0,beamPath[step][2]/x0,beamPath[step+1][2]/x0,beamPath[step][3]/x0,beamPath[step+1][3]*absCoef))
 
         nstep = int((beamPath[step+1][0] - beamPath[step][0]) / options.dt) + 1
-        print("nstep", nstep, beamPath[step+1][0] - beamPath[step][0])
         T = np.linspace(beamPath[step][0],beamPath[step+1][0],nstep)
         X = np.linspace(beamPath[step][1],beamPath[step+1][1],nstep)
         Y = np.linspace(beamPath[step][2],beamPath[step+1][2],nstep)
@@ -166,7 +165,8 @@ def main():
             beamLoc.write("{0} {1:.2e} {2:.2e} {3:.2e} {4:.2e}    {5:.2e} {6:.2e} {7:.2e} {8:.2e}\n".format(substep,t,x,y,w,t/t0,x/x0,y/x0,w*absCoef))
             exoout.put_time(substep,t)
             for cs in options.cs:
-                theta = beamProfile(exoout,w,options.r0 / options.x0,[x0,y0,0],cs,cellCenters[cs])
+                # Here we do not divise x and y by x0 becasue we assume that the mesh has been rescaled by x0 already
+                theta = beamProfile(exoout,w,options.r0 / options.x0,[x,y,0],cs,cellCenters[cs])
                 exoout.put_element_variable_values(cs,"Heat_Flux",substep,theta)
     exoout.close()
     beamLoc.close()
