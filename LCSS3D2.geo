@@ -19,7 +19,7 @@ hc       = depth/3;
 hBrittle = depth/2;
 wBrittle = 2*width/3;
 lc       = 2;
-lf       = 2;
+lf       = 4;
 epsc     = hBrittle/10;
 
 Printf("Domain size: %g x %g x %g",width,height,depth);
@@ -112,7 +112,7 @@ Physical Surface(31) = {29,31};
 //Bottom face
 Physical Surface(32) = {15,30};
 //Top face
-Physical Surface(31) = {14,28};
+Physical Surface(33) = {14,28};
 
 // 3 vertices along the lower face in order to block rigid motions
 // LL corner
