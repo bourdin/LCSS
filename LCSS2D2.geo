@@ -99,28 +99,15 @@ Field[1].Thickness =  hBrittle;
 Background Field   = 1;
 
 //Brittle part of the body ;
-Physical Volume(1) = {brittleRegion};
+Physical Surface(1) = {28};
 
 //Elastic part of the body ;
-Physical Volume(2) = {elasticRegion};
+Physical Surface(2) = {14};
 
 //Logical crack
-Physical Surface(30) = {logicalCrackS};
+Physical Line(30) = {45};
 //Physical crack
-Physical Surface(31) = {29,31};
-
-//Bottom face
-Physical Surface(32) = {15,30};
-//Top face
-Physical Surface(31) = {14,28};
-
-// 3 vertices along the lower face in order to block rigid motions
-// LL corner
-Physical Point(400) = {18};
-// UL corner
-Physical Point(401) = {22};
-// LR corner
-Physical Point(402) = {24};
+Physical Line(31) = {42,43};
 
 // 3 vertices along the upper face in order to block rigid motions
 // LL corner
