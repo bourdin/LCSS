@@ -52,7 +52,6 @@ def exoformat(e):
     return(0)
 
 def beamProfile(e,Wabs,r0,beamPos,cs,cellCenters):
-    import exodus as exo
     import numpy as np
     
     dim = e.num_dimensions()
@@ -107,6 +106,12 @@ def main():
     import numpy as np
     import os
     import pymef90
+    import sys
+    if sys.version_info.major == 3:
+        import exodus3 as exo
+    else:
+        import exodus2 as exo
+
     options = parse()
 
     if  os.path.exists(options.outputfile):
