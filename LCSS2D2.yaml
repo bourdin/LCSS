@@ -1,0 +1,142 @@
+### global options
+verbose: 1
+boundaryDisplacement:
+    scaling: linear
+boundaryTemp:
+    scaling: constant
+flux:
+    scaling: file
+    offset: 1
+stress:
+    offset: 3
+force: 
+    offset: 0
+pressureForce:
+    offset: 0
+CrackPressureForce:
+    offset: 0
+CumulatedPlasticDissipation:
+    offset: 0
+defmech:
+    irrevthres: 0.
+    timestepping:
+        type: quasistatic
+    solver:
+        type: AltMin
+    #sor:
+    #    omega: 1.4
+    pclag: 1
+    dampingCoefficient:
+        displacement: 0.
+heatxfer:
+    timestepping:
+        type: transient
+    initialTemp: 0
+temp:
+    snes:
+        type: ls
+    ksp: 
+        type: cg
+    pc:
+        type: bjacobi
+    ts:
+        type: beuler
+        adapt:
+            type: none
+        dt: 0.0033
+disp:
+    snes:
+        type: ls
+        linesearch:
+            type: basic
+            damping: 1.0
+        lag:
+            preconditioner: 1
+        atol: 1.0e-7
+        rtol: 1.0e-5
+    ksp:
+        type: cg
+        atol: 1.e-7
+        rtol: 1.e-5
+    pc:
+        type: ml
+time:
+    interpolation: exo
+cs0001:
+    name: "Brittle part"
+    hookeslaw: 
+        type: isotropic
+        YoungsModulus: 1
+        PoissonRatio: 0.23
+        PlaneStress: 1
+    FractureToughness: 5.4131e-4
+    internallength: 0.09
+    residualstiffness: 1.0e-7
+    LinearThermalExpansion: 1, 1, 0
+    ThermalConductivity: 1, 1, 0
+    damage:
+        type: AT1
+    plasticity:
+        type: NONE
+    unilateralContact:
+        type: HydrostaticDeviatoric
+    displacementbc: no,no,no
+    damageBC: no
+    advectionVector: 0,0,0
+cs0002:
+    name: "Elastic part"
+    hookeslaw:
+        type: isotropic
+        YoungsModulus: 1
+        PoissonRatio: 0.23
+        PlaneStress: 1
+    FractureToughness: 5.4131e-4
+    internallength: 0.09
+    residualstiffness: 1.0e-7
+    LinearThermalExpansion: 1, 1, 0
+    ThermalConductivity: 1, 1, 0
+    damage:
+        type: AT1Elastic
+    plasticity:
+        type: NONE
+    unilateralContact:
+        type: NONE
+    displacementbc: no,no,no
+    damageBC: no
+    advectionVector: 0,0,0
+cs0030:
+    name: "Logical Crack"
+    tempBC: no
+    displacementbc: no,no,no
+    damageBC: yes
+    boundaryDamage: 1.0
+cs0031:
+    name: "Physical Crack"
+    tempBC: no
+    displacementbc: no,no,no
+    damageBC: yes
+    boundaryDamage: 1.0
+vs0300:
+    name: "bottom left"
+    tempBC: no
+    damageBC: no
+    displacementBC: yes,no,no
+    boundaryDisplacement: 0.,0.,0.
+vs0500:
+    name: "LL corner"
+    tempBC: no
+    damageBC: no
+    displacementBC: yes,yes,no
+    boundaryDisplacement: 0.,0.,0.
+vs0501:
+    name: "UL corner"
+    tempBC: no
+    damageBC: no
+    displacementBC: yes,no,no
+    boundaryDisplacement: 0.,0.,0.
+vs0502:
+    name: "crack tip"
+    tempBC: no
+    damageBC: no
+    displacementBC: no,yes,no
+    boundaryDisplacement: 0.,0.,0.
