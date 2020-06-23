@@ -13,14 +13,14 @@ SetFactory("OpenCASCADE");
 r0       = 1.e-4;
 width    = 50;
 height   = 50;
-depth    = 0.7e-3/r0;
-hf       = depth/50;
-hc       = depth/3;
-hBrittle = depth/2;
-wBrittle = 2*width/3;
-lc       = 2;
-lf       = 2;
-epsc     = hBrittle/10;
+depth    = 1;
+hf       = 3.e-2;
+hc       = 0.5;
+hBrittle = 4;
+wBrittle = 4;
+lc       = 1.e-4;
+lf       = 3.e-2;
+epsc     = lc/10;
 
 Printf("Domain size: %g x %g x %g",width,height,depth);
 Printf("Using hf=%g, hc=%g",hf,hc);
@@ -116,3 +116,12 @@ Physical Point(500) = {17};
 Physical Point(501) = {19};
 // LR corner
 Physical Point(502) = {21};
+
+
+// Delete everything but the upper skin
+Delete {
+  Volume{13,14}; 
+}
+Delete {
+  Surface{8,9,10,13,15,16,17,18,19,26,27,29,30,31,32};
+}
