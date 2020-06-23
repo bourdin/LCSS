@@ -154,10 +154,10 @@ def main():
 
     substep = 0
     for step in range(beamPath.shape[0]-1):
-        print("Processing path line {0} (t={1:.2e}-{2:.2e},  x={3:.2e}-{4:.2e},  y={5:.2e}-{6:.2e},  W={7:.2e}-{8:.2e})".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
-        print("                       (t~={1:.2e}-{2:.2e}, x~={3:.2e}-{4:.2e}, y~={5:.2e}-{6:.2e}, W~={7:.2e}-{8:.2e})".format(step,beamPath[step][0]/t0,beamPath[step+1][0]/t0,beamPath[step][1],beamPath[step+1][1]/x0,beamPath[step][2]/x0,beamPath[step+1][2]/x0,beamPath[step][3]/x0,beamPath[step+1][3]*absCoef))
-        beamLoc.write("# path line {0} (t={1:.2e}-{2:.2e},  x={3:.2e}-{4:.2e},  y={5:.2e}-{6:.2e},  W={7:.2e}-{8:.2e})\n".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
-        beamLoc.write("#             (t~={1:.2e}-{2:.2e}, x~={3:.2e}-{4:.2e}, y~={5:.2e}-{6:.2e}, W~={7:.2e}-{8:.2e})\n".format(step,beamPath[step][0]/t0,beamPath[step+1][0]/t0,beamPath[step][1],beamPath[step+1][1]/x0,beamPath[step][2]/x0,beamPath[step+1][2]/x0,beamPath[step][3]/x0,beamPath[step+1][3]*absCoef))
+        print("Processing path line {0} (t={1:.4e}-{2:.4e},  x={3:.4e}-{4:.4e},  y={5:.4e}-{6:.4e},  W={7:.4e}-{8:.4e})".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
+        print("                       (t~={1:.4e}-{2:.4e}, x~={3:.4e}-{4:.4e}, y~={5:.4e}-{6:.4e}, W~={7:.4e}-{8:.4e})".format(step,beamPath[step][0]/t0,beamPath[step+1][0]/t0,beamPath[step][1],beamPath[step+1][1]/x0,beamPath[step][2]/x0,beamPath[step+1][2]/x0,beamPath[step][3]/x0,beamPath[step+1][3]*absCoef))
+        beamLoc.write("# path line {0} (t={1:.4e}-{2:.4e},  x={3:.4e}-{4:.4e},  y={5:.4e}-{6:.4e},  W={7:.4e}-{8:.4e})\n".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
+        beamLoc.write("#             (t~={1:.4e}-{2:.4e}, x~={3:.4e}-{4:.4e}, y~={5:.4e}-{6:.4e}, W~={7:.4e}-{8:.4e})\n".format(step,beamPath[step][0]/t0,beamPath[step+1][0]/t0,beamPath[step][1],beamPath[step+1][1]/x0,beamPath[step][2]/x0,beamPath[step+1][2]/x0,beamPath[step][3]/x0,beamPath[step+1][3]*absCoef))
 
         nstep = int((beamPath[step+1][0] - beamPath[step][0]) / options.dt) + 1
         T = np.linspace(beamPath[step][0],beamPath[step+1][0],nstep)
@@ -166,9 +166,9 @@ def main():
         W = np.linspace(beamPath[step][3],beamPath[step+1][3],nstep)
         for t,x,y,w in zip(T,X,Y,W):
             substep += 1
-            print("   time step {4}: \t t~={0:.2e}, x~={1:.2e}, y~={2:.2e}, W~={3:.2e}".format(t/t0,x/x0,y/x0,w * absCoef,substep))
-            print("                     \t t ={0:.2e}, x ={1:.2e}, y ={2:.2e}, W ={3:.2e}".format(t,x,y,w,substep))
-            beamLoc.write("{0} {1:.2e} {2:.2e} {3:.2e} {4:.2e}    {5:.2e} {6:.2e} {7:.2e} {8:.2e}\n".format(substep,t,x,y,w,t/t0,x/x0,y/x0,w*absCoef))
+            print("   time step {4}: \t t~={0:.4e}, x~={1:.4e}, y~={2:.4e}, W~={3:.4e}".format(t/t0,x/x0,y/x0,w * absCoef,substep))
+            print("                     \t t ={0:.4e}, x ={1:.4e}, y ={2:.4e}, W ={3:.4e}".format(t,x,y,w,substep))
+            beamLoc.write("{0} {1:.4e} {2:.4e} {3:.4e} {4:.4e}    {5:.4e} {6:.4e} {7:.4e} {8:.4e}\n".format(substep,t,x,y,w,t/t0,x/x0,y/x0,w*absCoef))
             exoout.put_time(substep,t/t0)
             for cs in options.cs:
                 theta = beamProfile(exoout,w*absCoef,options.r0 / options.x0,[x/x0,y/x0,0],cs,cellCenters[cs])
