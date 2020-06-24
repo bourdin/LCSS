@@ -1,0 +1,84 @@
+reset
+echo off
+set journal off
+set info off
+
+#{r0       = 1.e-3}
+#{width    = 50}
+#{height   = 50}
+#{depth    = 0.7e-3/r0}
+#{hf       = 0.05}
+#{hc       = 0.35}
+#{hBrittle = 4}
+#{wBrittle = 4}
+#{R        = 2}
+#{lc       = 0.5}
+#{lf       = 0.5}
+#{epsc     = lc}
+
+create brick x {width} y {height} z {depth}
+create brick x {wBrittle+R} y {hBrittle+2.*R} z {depth}
+move volume 2 x {-width/2+wBrittle/2+R/2}
+create brick x {wBrittle} y {hBrittle} z {depth}
+move volume 3 x {-width/2+wBrittle/2}
+
+webcut Volume 1 tool Body 2 
+delete Body 2 
+
+webcut Volume 4 tool Body 3 
+delete Body 3
+
+create vertex x {-width/2} Y {-epsc/2} z {-depth}
+create vertex x {-width/2+lc} Y {0} z {-depth}
+create vertex x {-width/2} Y {epsc/2} z {-depth}
+create surface vertex 57 58 59 
+
+webcut volume 5 sweep surface 45 perpendicular outward through_all
+delete body 6 
+delete volume 7
+
+webcut volume 5 with plane xplane offset {-width/2+lc+lf}
+webcut volume 8 with plane yplane offset 0
+
+imprint all
+merge all
+unmerge surface 67
+
+block 1 volume 5 8 9
+block 2 volume 1 4
+block 30 surface 46 47
+block 31 surface 67 71
+
+block 33 surface 22 38 58 70 72
+block 32 surface 24 37 60 68 74
+
+nodeset 400 vertex 7
+nodeset 401 vertex 8
+nodeset 402 vertex 6
+
+nodeset 500 vertex 4
+nodeset 501 vertex 3
+nodeset 502 vertex 1
+
+nodeset 600 curve 128
+
+
+volume all scheme tetmesh
+volume 1 size {hc}
+volume 5 8 9 size {hf}
+mesh volume 5
+mesh volume 8
+mesh volume 9
+surface in volume 1 scheme tridelaunay
+tridelaunay point placement gq
+mesh volume 1
+mesh volume 4
+
+set info on
+quality volume all shape global list verbose errors
+
+set exodus netcdf4 off
+set large exodus file on
+export mesh "LCSS3D3.gen"  dimension 3  overwrite 
+
+quit
