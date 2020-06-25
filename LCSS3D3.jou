@@ -12,9 +12,9 @@ set info off
 #{hBrittle = 4}
 #{wBrittle = 4}
 #{R        = 2}
-#{lc       = 0.5}
+#{lc       = 0.01}
 #{lf       = 0.5}
-#{epsc     = lc}
+#{epsc     = 0.05}
 
 create brick x {width} y {height} z {depth}
 create brick x {wBrittle+R} y {hBrittle+2.*R} z {depth}
@@ -49,8 +49,8 @@ block 2 volume 1 4
 block 30 surface 46 47
 block 31 surface 67 71
 
-block 33 surface 22 38 58 70 72
-block 32 surface 24 37 60 68 74
+#block 33 surface 22 38 58 70 72
+#block 32 surface 24 37 60 68 74
 
 nodeset 400 vertex 7
 nodeset 401 vertex 8
@@ -69,8 +69,8 @@ volume 5 8 9 size {hf}
 mesh volume 5
 mesh volume 8
 mesh volume 9
-surface in volume 1 scheme tridelaunay
-tridelaunay point placement gq
+#surface in volume 1 scheme tridelaunay
+#tridelaunay point placement gq
 mesh volume 1
 mesh volume 4
 
