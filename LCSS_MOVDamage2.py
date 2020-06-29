@@ -298,7 +298,7 @@ def plot(options):
 
     cmd_exists = lambda x: any(os.access(os.path.join(path, x), os.X_OK) for path in os.environ["PATH"].split(os.pathsep))    
     #cmd = 'ffmpeg -y -i Frames/{prefix}-%04d.png -vcodec mjpeg -qscale 1  {prefix}.avi'.format(prefix=prefix)
-    cmd = 'ffmpeg -y -i {framesDir}/{prefix}-%04d-disp{displacementScaling:.2f}.png -f mp4 -vcodec h264 -pix_fmt yuv420p  {movName}.mp4'.format(framesDir=framesDir,prefix=prefix,movName=movName,**options.__dict__)
+    cmd = 'ffmpeg -y -i {framesDir}/{prefix}-%04d-disp{displacementScaling:.2f}.png -f mp4 -vcodec h264 -pix_fmt yuv420p  {movName}'.format(framesDir=framesDir,prefix=prefix,movName=movName,**options.__dict__)
     if cmd_exists('ffmpeg'):
         print('\n\t running {0}\n'.format(cmd))
         os.system(cmd)
