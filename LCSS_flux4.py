@@ -160,10 +160,14 @@ def main():
         beamLoc.write("#             (t~={1:.4e}-{2:.4e}, x~={3:.4e}-{4:.4e}, y~={5:.4e}-{6:.4e}, W~={7:.4e}-{8:.4e})\n".format(step,beamPath[step][0]/t0,beamPath[step+1][0]/t0,beamPath[step][1],beamPath[step+1][1]/x0,beamPath[step][2]/x0,beamPath[step+1][2]/x0,beamPath[step][3]/x0,beamPath[step+1][3]*absCoef))
 
         nstep = int((beamPath[step+1][0] - beamPath[step][0]) / options.dt) + 1
-        T = np.linspace(beamPath[step][0],beamPath[step+1][0],nstep)
-        X = np.linspace(beamPath[step][1],beamPath[step+1][1],nstep)
-        Y = np.linspace(beamPath[step][2],beamPath[step+1][2],nstep)
-        W = np.linspace(beamPath[step][3],beamPath[step+1][3],nstep)
+        if step == 0:
+            skip = 0
+        else:
+            skip = 1
+        T = np.linspace(beamPath[step][0],beamPath[step+1][0],nstep)[skip:]
+        X = np.linspace(beamPath[step][1],beamPath[step+1][1],nstep)[skip:]
+        Y = np.linspace(beamPath[step][2],beamPath[step+1][2],nstep)[skip:]
+        W = np.linspace(beamPath[step][3],beamPath[step+1][3],nstep)[skip:]
         for t,x,y,w in zip(T,X,Y,W):
             substep += 1
             print("   time step {4}: \t t~={0:.4e}, x~={1:.4e}, y~={2:.4e}, W~={3:.4e}".format(t/t0,x/x0,y/x0,w * absCoef,substep))
