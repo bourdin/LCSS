@@ -1,33 +1,32 @@
 SetFactory("OpenCASCADE");
-//width   = {width};
-//height  = {height};
-//depth   = {depth};
-//hf      = {hf};
-//hc      = {hc};
-//r       = {r};
-//lc      = {lc};
-//lf      = {lf};
-//epsc    = height/1000;
+// All units of length must be scaled by a factor x0 (usually 1e-3), given in the 00_INFO.json file
+
+width    =  100;   // total width of the domain
+height   =  60;    // total height of the domain 
+xc0      = -40;    // lower left corner of the rounded rectangle to cut
+yc0      = -20;    
+xc1      =  40;    // upper right corner of the rounded rectangle to cur
+yc1      =  20;   
+wBrittle =  4;     // width of the area where the mesh is refined around the beam path
+                   // must be  wide enough so that the rounded part of teh rectangle is 
+                   // contained in the region with a fine mesh, i.e. 
+                   // wBrittle > 2 R ( sqrt(2)-1) where R is the radius (R is a good choice)
+depth    =  10;     // not used in 2D
+hf       =  3.e-2; // fine mesh
+hc       =  0.5;   // coarse mesh
+yc       =  yc0;   // position of the initial crack (must be in the refined area or the script will break)
+lf       =  1;     // length of the initial physical crack represented by a very elongated ellipse 
+epsc     =  lf/50; // height of the ellipse
 
 
-r0       = 1.e-3;
-width    = 100;
-height   = 60;
-yc       = -20;
-depth    = 1;
-hf       = 3.e-2;
-hc       = 0.5;
-hBrittle = 4;
-wBrittle = 50;
-lc       = .06;
-lf       = 1;
-epsc     = lf/50;
+hf = 0.1;
+hc = 2;
+lf = 3;
+epsc = 1;
 
 Printf("Domain size: %g x %g x %g",width,height,depth);
 Printf("Using hf=%g, hc=%g",hf,hc);
 
-//Mesh.Algorithm               = 6;
-//Mesh.Algorithm3D             = 1;
 Mesh.Format                  = 1;
 Mesh.MshFileVersion          = 2;
 Mesh.CharacteristicLengthFromPoints = 0;
@@ -37,23 +36,18 @@ Mesh.CharacteristicLengthExtendFromBoundary = 0;
 Mesh.Optimize                = 1;
 
 
-elasticRegion = newv;
-Box(elasticRegion) = {-width/2,-height/2,-depth,width,height,depth};
+box0 = newv;
+Box(box0) = {-width/2,-height/2,-depth,width,height,depth};
 
-// The beam and crack must remain in the brittleRegion
-brittleRegion = newv;
-Box(brittleRegion) = {-width/2,yc-hBrittle/2,-depth,wBrittle,hBrittle,depth};
-out[] = BooleanFragments{ Volume{elasticRegion}; Delete; }
-                        { Volume{brittleRegion}; Delete; };
+box1 = newv;
+Box(box1) = {xc0+wBrittle/2,yc0+wBrittle/2,-depth,xc1-xc0-wBrittle,yc1-yc0-wBrittle,depth};
 
+box2 = newv;
+Box(box2) = {xc0-wBrittle/2,yc0-wBrittle/2,-depth,xc1-xc0+wBrittle,yc1-yc0+wBrittle,depth};
 
-// //Printing the fragment command helps identifying the inside from the outside. 
-//Printf("out[0] %g",out[0]);
-//Printf("out[1] %g",out[1]);
-//Printf("out[2] %g",out[2]);
+box3 = newv;
+Box(box3) = {-width/2,yc0-wBrittle/2,-depth,xc0-wBrittle/2+width/2,wBrittle,depth};
 
-brittleRegion = out[0];
-elasticRegion = out[1];
 
 // Initial Physical crack
 physicalCrackC = newc;
@@ -64,65 +58,98 @@ physicalCrackS = news;
 Plane Surface (physicalCrackS) = {physicalCrackL};
 out[] = Extrude {0, 0, depth} {Surface{physicalCrackS}; };
 physicalCrackV = out[1];
-//Printf("Subtracting %g from %g",physicalCrackV,brittleRegion);
-brittleRegion = BooleanDifference{ Volume{brittleRegion}; Delete; }
-                         { Volume{physicalCrackV};  Delete; };
 
-// Initial logical crack
-lcrackBegin = newp;
-Point(lcrackBegin) = {-width/2+lf,yc,-depth};
-lcrackEnd = newp;
-Point(lcrackEnd) = {-width/2+lf+lc,yc,-depth};
-logicalCrackL = newl;
-Line(logicalCrackL) = {lcrackBegin,lcrackEnd};
-out[] = Extrude {0, 0, depth} {Line{logicalCrackL}; };
-logicalCrackS = out[1];
-out = BooleanFragments{ Volume{brittleRegion};  Delete; }
-                      { Surface{logicalCrackS}; Delete; };
-//Printf("out[0] %g",out[0]);
-//Printf("out[1] %g",out[1]);
-//Printf("out[2] %g",out[2]);
-//Printf("brittleRegion %g",brittleRegion);
-//Printf("logicalCrackS %g",logicalCrackS);
+out   = BooleanDifference{ Volume{box0}; Delete; }
+                         { Volume{box1, box2, box3}; };
+zone3 = out[0];
+
+out   = BooleanDifference{ Volume{box2}; Delete; }
+                         { Volume{box1}; };
+zone2 = out[0];
+zone1 = box1[0];
+
+out   = BooleanDifference{ Volume{box3}; Delete; }
+                         { Volume{physicalCrackV}; Delete;};
+zone4 = out[0];
+
+// Imprint all volumes and surfaces at the cost of renumbering everything
+Coherence;
+
+// Delete everything but the upper skin
+Delete {
+  Volume{1,13,25,37}; 
+}
+Delete {
+  Surface{7,8,9,10,11,14,16,22,23,25,26,27,28,29,30,31,32,33,35,36,38,39,40,41};
+}
+
+
+
+
 
 
 Field[1]           =  Box;
 Field[1].XMin      = -width/2;
-Field[1].XMax      = -width/2+wBrittle;
-Field[1].YMin      = -hBrittle/2+yc;
-Field[1].YMax      =  hBrittle/2+yc;
+Field[1].XMax      =  xc1+wBrittle/2.;
+Field[1].YMin      =  yc0-wBrittle/2;
+Field[1].YMax      =  yc0+wBrittle/2;
 Field[1].ZMin      =  -depth;
 Field[1].ZMax      =  0;
 Field[1].VIn       =  hf;
 Field[1].VOut      =  hc;
-Field[1].Thickness =  hBrittle;
+Field[1].Thickness =  wBrittle;
+ 
+Field[2]           =  Box;
+Field[2].XMin      =  xc0-wBrittle/2.;
+Field[2].XMax      =  xc1+wBrittle/2.;
+Field[2].YMin      =  yc1-wBrittle/2;
+Field[2].YMax      =  yc1+wBrittle/2;
+Field[2].ZMin      =  -depth;
+Field[2].ZMax      =  0;
+Field[2].VIn       =  hf;
+Field[2].VOut      =  hc;
+Field[2].Thickness =  wBrittle;
 
-Background Field   = 1;
+Field[3]           =  Box;
+Field[3].XMin      =  xc0-wBrittle/2.;
+Field[3].XMax      =  xc0+wBrittle/2.;
+Field[3].YMin      =  yc0-wBrittle/2;
+Field[3].YMax      =  yc1+wBrittle/2;
+Field[3].ZMin      =  -depth;
+Field[3].ZMax      =  0;
+Field[3].VIn       =  hf;
+Field[3].VOut      =  hc;
+Field[3].Thickness =  wBrittle;
 
+Field[4]           =  Box;
+Field[4].XMin      =  xc1-wBrittle/2.;
+Field[4].XMax      =  xc1+wBrittle/2.;
+Field[4].YMin      =  yc0-wBrittle/2;
+Field[4].YMax      =  yc1+wBrittle/2;
+Field[4].ZMin      =  -depth;
+Field[4].ZMax      =  0;
+Field[4].VIn       =  hf;
+Field[4].VOut      =  hc;
+Field[4].Thickness =  wBrittle;
+
+Field[10]           = Min;
+Field[10].FieldsList = {1,2,3,4};
+
+Background Field   = 10;
+ 
 //Brittle part of the body ;
-Physical Surface(1) = {28};
+Physical Surface(1) = {34,37};
 
 //Elastic part of the body ;
-Physical Surface(2) = {14};
+Physical Surface(2) = {12,24};
 
-//Logical crack
-Physical Line(30) = {45};
 //Physical crack
-Physical Line(31) = {42,43};
+Physical Line(31) = {76,77};
 
 // 3 vertices along the upper face in order to block rigid motions
 // LL corner
-Physical Point(500) = {17};
+Physical Point(500) = {33};
 // UL corner
-Physical Point(501) = {19};
+Physical Point(501) = {38};
 // LR corner
-Physical Point(502) = {21};
-
-
-// Delete everything but the upper skin
-Delete {
-  Volume{13,14}; 
-}
-Delete {
-  Surface{8,9,10,13,15,16,17,18,19,26,27,29,30,31,32};
-}
+Physical Point(502) = {40};
