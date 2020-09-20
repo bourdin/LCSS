@@ -28,6 +28,7 @@ def parse(args=None):
 
     parser.add_argument("--cs",type=int,nargs='*',help="list of cell sets where the beam is applied",default=[1,])
     parser.add_argument("--force",action="store_true",default=False,help="Overwrite existing files without prompting")
+    parser.add_argument("--skip",type=int,default=0,help="number of steps to skip (assumes that the output file exists)")
     options = parser.parse_args()
     return options
     
@@ -114,18 +115,19 @@ def main():
 
     options = parse()
 
-    if  os.path.exists(options.outputfile):
-        if options.force:
-            os.remove(options.outputfile)
-        else:
-            if pymef90.confirm("ExodusII file {0} already exists. Overwrite?".format(options.outputfile)):
+    if options.skip == 0:
+        if  os.path.exists(options.outputfile):
+            if options.force:
                 os.remove(options.outputfile)
             else:
-                print ('\n\t{0} was NOT generated.\n'.format(options.outputfile))
-                return -1
-    exoin  = exo.exodus(options.inputfile,mode='r')
-    exoout = exoin.copy(options.outputfile)
-    exoout.close()
+                if pymef90.confirm("ExodusII file {0} already exists. Overwrite?".format(options.outputfile)):
+                    os.remove(options.outputfile)
+                else:
+                    print ('\n\t{0} was NOT generated.\n'.format(options.outputfile))
+                    return -1
+        exoin  = exo.exodus(options.inputfile,mode='r')
+        exoout = exoin.copy(options.outputfile)
+        exoout.close()
     exoout  = exo.exodus(options.outputfile,mode='a',array_type='numpy')
     ### Adding a QA record, needed until visit fixes its exodus reader
     import datetime
@@ -153,7 +155,7 @@ def main():
     t0 = options.t0
 
     substep = 0
-    for step in range(beamPath.shape[0]-1):
+    for step in range(options.skip,beamPath.shape[0]-1):
         print("Processing path line {0} (t={1:.4e}-{2:.4e},  x={3:.4e}-{4:.4e},  y={5:.4e}-{6:.4e},  W={7:.4e}-{8:.4e})".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
         print("                       (t~={1:.4e}-{2:.4e}, x~={3:.4e}-{4:.4e}, y~={5:.4e}-{6:.4e}, W~={7:.4e}-{8:.4e})".format(step,beamPath[step][0]/t0,beamPath[step+1][0]/t0,beamPath[step][1],beamPath[step+1][1]/x0,beamPath[step][2]/x0,beamPath[step+1][2]/x0,beamPath[step][3]/x0,beamPath[step+1][3]*absCoef))
         beamLoc.write("# path line {0} (t={1:.4e}-{2:.4e},  x={3:.4e}-{4:.4e},  y={5:.4e}-{6:.4e},  W={7:.4e}-{8:.4e})\n".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
