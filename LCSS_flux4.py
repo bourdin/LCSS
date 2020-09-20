@@ -127,6 +127,7 @@ def main():
                     return -1
         exoin  = exo.exodus(options.inputfile,mode='r')
         exoout = exoin.copy(options.outputfile)
+        exoformat(exoout)
         exoout.close()
     exoout  = exo.exodus(options.outputfile,mode='a',array_type='numpy')
     ### Adding a QA record, needed until visit fixes its exodus reader
@@ -136,8 +137,7 @@ def main():
     QA_rec_len = 32
     QA = [os.path.basename(sys.argv[0]),os.path.basename(__file__),datetime.date.today().strftime('%Y%m%d'),datetime.datetime.now().strftime("%H:%M:%S")]
     exoout.put_qa_records([[ q[0:31] for q in QA],])
-
-    exoformat(exoout)
+        
     
     cellCenters = {}
     for cs in options.cs:
@@ -155,7 +155,7 @@ def main():
     t0 = options.t0
 
     substep = 0
-    for step in range(options.skip,beamPath.shape[0]-1):
+    for step in range(beamPath.shape[0]-1):
         print("Processing path line {0} (t={1:.4e}-{2:.4e},  x={3:.4e}-{4:.4e},  y={5:.4e}-{6:.4e},  W={7:.4e}-{8:.4e})".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
         print("                       (t~={1:.4e}-{2:.4e}, x~={3:.4e}-{4:.4e}, y~={5:.4e}-{6:.4e}, W~={7:.4e}-{8:.4e})".format(step,beamPath[step][0]/t0,beamPath[step+1][0]/t0,beamPath[step][1],beamPath[step+1][1]/x0,beamPath[step][2]/x0,beamPath[step+1][2]/x0,beamPath[step][3]/x0,beamPath[step+1][3]*absCoef))
         beamLoc.write("# path line {0} (t={1:.4e}-{2:.4e},  x={3:.4e}-{4:.4e},  y={5:.4e}-{6:.4e},  W={7:.4e}-{8:.4e})\n".format(step,beamPath[step][0],beamPath[step+1][0],beamPath[step][1],beamPath[step+1][1],beamPath[step][2],beamPath[step+1][2],beamPath[step][3],beamPath[step+1][3]))
@@ -172,13 +172,16 @@ def main():
         W = np.linspace(beamPath[step][3],beamPath[step+1][3],nstep)[skip:]
         for t,x,y,w in zip(T,X,Y,W):
             substep += 1
-            print("   time step {4}: \t t~={0:.4e}, x~={1:.4e}, y~={2:.4e}, W~={3:.4e}".format(t/t0,x/x0,y/x0,w * absCoef,substep))
-            print("                     \t t ={0:.4e}, x ={1:.4e}, y ={2:.4e}, W ={3:.4e}".format(t,x,y,w,substep))
-            beamLoc.write("{0} {1:.4e} {2:.4e} {3:.4e} {4:.4e}    {5:.4e} {6:.4e} {7:.4e} {8:.4e}\n".format(substep,t,x,y,w,t/t0,x/x0,y/x0,w*absCoef))
-            exoout.put_time(substep,t/t0)
-            for cs in options.cs:
-                theta = beamProfile(exoout,w*absCoef,options.r0 / options.x0,[x/x0,y/x0,0],cs,cellCenters[cs])
-                exoout.put_element_variable_values(cs,"Heat_Flux",substep,theta)
+            if substep > options.skip:
+                print("   time step {4}: \t t~={0:.4e}, x~={1:.4e}, y~={2:.4e}, W~={3:.4e}".format(t/t0,x/x0,y/x0,w * absCoef,substep))
+                print("                     \t t ={0:.4e}, x ={1:.4e}, y ={2:.4e}, W ={3:.4e}".format(t,x,y,w,substep))
+                beamLoc.write("{0} {1:.4e} {2:.4e} {3:.4e} {4:.4e}    {5:.4e} {6:.4e} {7:.4e} {8:.4e}\n".format(substep,t,x,y,w,t/t0,x/x0,y/x0,w*absCoef))
+                exoout.put_time(substep,t/t0)
+                for cs in options.cs:
+                    theta = beamProfile(exoout,w*absCoef,options.r0 / options.x0,[x/x0,y/x0,0],cs,cellCenters[cs])
+                    exoout.put_element_variable_values(cs,"Heat_Flux",substep,theta)
+            else:
+                print('skipping substep {0}'.format(substep))
     exoout.close()
     beamLoc.close()
     
