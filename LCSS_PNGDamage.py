@@ -45,7 +45,7 @@ def SetAnnotations():
     AnnotationAtts.axes2D.xAxis.tickMarks.majorMaximum = 1
     AnnotationAtts.axes2D.xAxis.tickMarks.minorSpacing = 0.02
     AnnotationAtts.axes2D.xAxis.tickMarks.majorSpacing = 0.2
-    AnnotationAtts.axes2D.xAxis.grid = 0
+    AnnotationAtts.axes2D.xAxis.grid = 1
     AnnotationAtts.axes2D.yAxis.title.visible = 0
     AnnotationAtts.axes2D.yAxis.title.font.font = AnnotationAtts.axes2D.yAxis.title.font.Arial  # Arial, Courier, Times
     AnnotationAtts.axes2D.yAxis.title.font.scale = 1
@@ -70,7 +70,7 @@ def SetAnnotations():
     AnnotationAtts.axes2D.yAxis.tickMarks.majorMaximum = 1
     AnnotationAtts.axes2D.yAxis.tickMarks.minorSpacing = 0.02
     AnnotationAtts.axes2D.yAxis.tickMarks.majorSpacing = 0.2
-    AnnotationAtts.axes2D.yAxis.grid = 0
+    AnnotationAtts.axes2D.yAxis.grid = 1
     AnnotationAtts.userInfoFlag = 0
     AnnotationAtts.userInfoFont.font = AnnotationAtts.userInfoFont.Arial  # Arial, Courier, Times
     AnnotationAtts.userInfoFont.scale = 1

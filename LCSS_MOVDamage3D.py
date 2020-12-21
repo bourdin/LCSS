@@ -13,6 +13,28 @@ def savePNG(filename,geometry=[4096,4096]):
     return SaveWindow()
 
 def SetAnnotations():
+    # Begin spontaneous state
+    View3DAtts = View3DAttributes()
+    View3DAtts.viewNormal = (-0.5807712759861402, -0.6171360034225121, 0.5308934716768702)
+    View3DAtts.focus = (0, 0, -0.175)
+    View3DAtts.viewUp = (0.08848834059742759, 0.6004278743402324, 0.7947680046992227)
+    View3DAtts.viewAngle = 30
+    View3DAtts.parallelScale = 58.3098
+    View3DAtts.nearPlane = -116.62
+    View3DAtts.farPlane = 116.62
+    View3DAtts.imagePan = (0.2294172242755754, 0.191482960420443)
+    View3DAtts.imageZoom = 3.7975
+    View3DAtts.perspective = 1
+    View3DAtts.eyeAngle = 2
+    View3DAtts.centerOfRotationSet = 0
+    View3DAtts.centerOfRotation = (0, 0, -0.175)
+    View3DAtts.axis3DScaleFlag = 0
+    View3DAtts.axis3DScales = (1, 1, 1)
+    View3DAtts.shear = (0, 0, 1)
+    View3DAtts.windowValid = 1
+    SetView3D(View3DAtts)
+    # End spontaneous state
+
     ViewCurveAtts = ViewCurveAttributes()
     ViewCurveAtts.domainCoords = (0, 1)
     ViewCurveAtts.rangeCoords = (0, 1)
@@ -20,30 +42,8 @@ def SetAnnotations():
     ViewCurveAtts.domainScale = ViewCurveAtts.LINEAR  # LINEAR, LOG
     ViewCurveAtts.rangeScale = ViewCurveAtts.LINEAR  # LINEAR, LOG
     SetViewCurve(ViewCurveAtts)
-    View3DAtts = View3DAttributes()
-    View3DAtts.viewNormal = (-0.711164, -0.407435, 0.572924)
-    View3DAtts.focus = (0, 0, 0)
-    View3DAtts.viewUp = (0.382339, 0.459737, 0.801535)
-    View3DAtts.viewAngle = 30
-    View3DAtts.parallelScale = 35.3571
-    View3DAtts.nearPlane = -70.7141
-    View3DAtts.farPlane = 70.7141
-    View3DAtts.imagePan = (0.194787, 0.123699)
-    View3DAtts.imageZoom = 6.54872
-    View3DAtts.perspective = 1
-    View3DAtts.eyeAngle = 2
-    View3DAtts.centerOfRotationSet = 0
-    View3DAtts.centerOfRotation = (0, 0, 0)
-    View3DAtts.axis3DScaleFlag = 0
-    View3DAtts.axis3DScales = (1, 1, 1)
-    View3DAtts.shear = (0, 0, 1)
-    View3DAtts.windowValid = 1
-    SetView3D(View3DAtts)
-    ViewAxisArrayAtts = ViewAxisArrayAttributes()
-    ViewAxisArrayAtts.domainCoords = (0, 1)
-    ViewAxisArrayAtts.rangeCoords = (0, 1)
-    ViewAxisArrayAtts.viewportCoords = (0.15, 0.9, 0.1, 0.85)
-    SetViewAxisArray(ViewAxisArrayAtts)
+
+
     # Logging for SetAnnotationObjectOptions is not implemented yet.
     AnnotationAtts = AnnotationAttributes()
     AnnotationAtts.axes3D.visible = 1
