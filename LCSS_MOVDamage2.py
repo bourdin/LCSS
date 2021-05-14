@@ -159,10 +159,10 @@ def draw(displacementScaling=.1,damageThreshold=.99,tempMax=None,BB=None):
     ContourAtts.minFlag = 1
     ContourAtts.min = 0
     if tempMax:
-        ContourAtts.max = tempMax
         ContourAtts.maxFlag = 1
+        ContourAtts.max = tempMax
     else:
-        ContourAtts.max = 0
+        ContourAtts.maxFlag = 0
     ContourAtts.scaling = ContourAtts.Linear  # Linear, Log
     ContourAtts.wireframe = 0
     SetPlotOptions(ContourAtts)
