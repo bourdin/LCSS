@@ -103,7 +103,7 @@ def getlaststep(fname):
   return(int(laststep))
 
 
-def draw(displacementScaling=.1,damageThreshold=.99,BB=None):
+def draw(displacementScaling=.1,damageThreshold=.99,tempMax=None,BB=None):
     ##
     ## Add pseudocolor plot of fracture field
     ##
@@ -152,14 +152,17 @@ def draw(displacementScaling=.1,damageThreshold=.99,BB=None):
     ContourAtts.invertColorTable = 0
     ContourAtts.legendFlag = 1
     ContourAtts.lineWidth = 1
-    ContourAtts.contourNLevels = 10
+    ContourAtts.contourNLevels = 11
     ContourAtts.contourValue = ()
     ContourAtts.contourPercent = ()
     ContourAtts.contourMethod = ContourAtts.Level  # Level, Value, Percent
-    ContourAtts.minFlag = 0
-    ContourAtts.maxFlag = 0
+    ContourAtts.minFlag = 1
     ContourAtts.min = 0
-    ContourAtts.max = 1
+    if tempMax:
+        ContourAtts.max = 1
+        ContourAtts.maxFlag = tempMax
+    else:
+        ContourAtts.max = 0
     ContourAtts.scaling = ContourAtts.Linear  # Linear, Log
     ContourAtts.wireframe = 0
     SetPlotOptions(ContourAtts)
@@ -318,6 +321,7 @@ def parse(args=None):
     parser.add_argument('--PoissonRatio',type=float,default=.23)
     parser.add_argument('--step_min',type=int,default=1)
     parser.add_argument('--step_max',type=int,default=0)
+    parser.add_argument('--temp_max',type=float,default=0.15)
     parser.add_argument('--force',default=False,action='store_true')
     parser.add_argument('inputfile',help='input file')
     return parser.parse_args()
